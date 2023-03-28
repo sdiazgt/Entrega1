@@ -1,4 +1,4 @@
-﻿Create Database InscripcionesBrDb
+Create Database InscripcionesBrDb
 GO
 
 USE [InscripcionesBrDb]
@@ -16,6 +16,39 @@ CREATE TABLE [dbo].[Persona](
 ))
 GO
 
+CREATE TABLE [dbo].[Enajenacion](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CNE] [nvarchar](50) NOT NULL,
+	[Comuna] [nvarchar](50) NOT NULL,
+	[Manzana] [nchar](50) NOT NULL,
+	[RolPredial] [nchar](50) NOT NULL,
+	[Enajenantes] [nvarchar](MAX)  NULL,
+	[Adquirientes] [nvarchar](MAX)  NULL,
+	[Foja] [nchar](50) NOT NULL,
+	[FechaInscripcion] [date] NOT NULL,
+	[NumeroInscripcion] [nchar](50) NULL,
+ CONSTRAINT [PK_Enajenacion] PRIMARY KEY CLUSTERED(
+	[Id] ASC
+))
+GO
+
+CREATE TABLE [dbo].[Multipropietario](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Comuna] [nvarchar](50) NOT NULL,
+	[Manzana] [nchar](50) NOT NULL,
+	[RolPredial] [nchar](50) NOT NULL,
+	[RutPropietario] [nvarchar](10) NOT NULL,
+	[PorcentajeDerechoPropietario] [nchar](10) NULL,
+	[Foja] [nchar](50) NOT NULL,
+	[AnoInscripcion] [date] NOT NULL,
+	[NumeroInscripcion] [nchar](50) NULL,
+	[FechaInscripcion] [date] NOT NULL,
+	[AnoVigenciaInicial] [date] NOT NULL,
+	[AnoVigenciaFinal] [date] NULL
+ CONSTRAINT [PK_Multipropietario] PRIMARY KEY CLUSTERED(
+	[Id] ASC
+))
+GO
 
 USE [InscripcionesBrDb]
 GO
@@ -25,7 +58,4 @@ INSERT [dbo].[Persona] ([Id], [Rut], [Nombre], [FechaNacimiento], [Email], [Dire
 GO
 SET IDENTITY_INSERT [dbo].[Persona] OFF
 GO
-
-
-
 
