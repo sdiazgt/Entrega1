@@ -1,0 +1,90 @@
+﻿@model UAndes.ICC5103._202301.Models.Enajenacion
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Enajenacion</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CNE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CNE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Comuna)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comuna)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Manzana)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Manzana)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RolPredial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RolPredial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Enajenantes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Enajenantes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Adquirientes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adquirientes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Foja)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Foja)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaInscripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaInscripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumeroInscripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumeroInscripcion)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

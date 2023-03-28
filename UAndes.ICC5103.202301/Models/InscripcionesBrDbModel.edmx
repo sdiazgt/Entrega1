@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="InscripcionesBrDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Enajenacion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CNE" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Comuna" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Manzana" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="RolPredial" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="Enajenantes" Type="nvarchar(max)" />
+          <Property Name="Adquirientes" Type="nvarchar(max)" />
+          <Property Name="Foja" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="FechaInscripcion" Type="date" Nullable="false" />
+          <Property Name="NumeroInscripcion" Type="nchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Multipropietario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Comuna" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Manzana" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="RolPredial" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="RutPropietario" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="PorcentajeDerechoPropietario" Type="nchar" MaxLength="10" />
+          <Property Name="Foja" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="AnoInscripcion" Type="date" Nullable="false" />
+          <Property Name="NumeroInscripcion" Type="nchar" MaxLength="50" />
+          <Property Name="FechaInscripcion" Type="date" Nullable="false" />
+          <Property Name="AnoVigenciaInicial" Type="date" Nullable="false" />
+          <Property Name="AnoVigenciaFinal" Type="date" />
+        </EntityType>
+        <EntityType Name="Persona">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Rut" Type="nvarchar" MaxLength="10" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FechaNacimiento" Type="date" Nullable="false" />
+          <Property Name="Email" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="Dirección" Type="nchar" MaxLength="50" />
+        </EntityType>
+        <EntityContainer Name="InscripcionesBrDbModelStoreContainer">
+          <EntitySet Name="Enajenacion" EntityType="Self.Enajenacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Multipropietario" EntityType="Self.Multipropietario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Persona" EntityType="Self.Persona" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="InscripcionesBrDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Persona">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Rut" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Dirección" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="InscripcionesBrDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Persona" EntityType="Self.Persona" />
+          <EntitySet Name="Enajenacion" EntityType="InscripcionesBrDbModel.Enajenacion" />
+          <EntitySet Name="Multipropietario" EntityType="InscripcionesBrDbModel.Multipropietario" />
+        </EntityContainer>
+        <EntityType Name="Enajenacion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CNE" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Comuna" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Manzana" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="RolPredial" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="Enajenantes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Adquirientes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Foja" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="FechaInscripcion" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="NumeroInscripcion" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Multipropietario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Comuna" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Manzana" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="RolPredial" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="RutPropietario" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PorcentajeDerechoPropietario" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Foja" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="AnoInscripcion" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="NumeroInscripcion" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="FechaInscripcion" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="AnoVigenciaInicial" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="AnoVigenciaFinal" Type="DateTime" Precision="0" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="InscripcionesBrDbModelStoreContainer" CdmEntityContainer="InscripcionesBrDbEntities">
+          <EntitySetMapping Name="Persona">
+            <EntityTypeMapping TypeName="InscripcionesBrDbModel.Persona">
+              <MappingFragment StoreEntitySet="Persona">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Rut" ColumnName="Rut" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Dirección" ColumnName="Dirección" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Enajenacion">
+            <EntityTypeMapping TypeName="InscripcionesBrDbModel.Enajenacion">
+              <MappingFragment StoreEntitySet="Enajenacion">
+                <ScalarProperty Name="NumeroInscripcion" ColumnName="NumeroInscripcion" />
+                <ScalarProperty Name="FechaInscripcion" ColumnName="FechaInscripcion" />
+                <ScalarProperty Name="Foja" ColumnName="Foja" />
+                <ScalarProperty Name="Adquirientes" ColumnName="Adquirientes" />
+                <ScalarProperty Name="Enajenantes" ColumnName="Enajenantes" />
+                <ScalarProperty Name="RolPredial" ColumnName="RolPredial" />
+                <ScalarProperty Name="Manzana" ColumnName="Manzana" />
+                <ScalarProperty Name="Comuna" ColumnName="Comuna" />
+                <ScalarProperty Name="CNE" ColumnName="CNE" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Multipropietario">
+            <EntityTypeMapping TypeName="InscripcionesBrDbModel.Multipropietario">
+              <MappingFragment StoreEntitySet="Multipropietario">
+                <ScalarProperty Name="AnoVigenciaFinal" ColumnName="AnoVigenciaFinal" />
+                <ScalarProperty Name="AnoVigenciaInicial" ColumnName="AnoVigenciaInicial" />
+                <ScalarProperty Name="FechaInscripcion" ColumnName="FechaInscripcion" />
+                <ScalarProperty Name="NumeroInscripcion" ColumnName="NumeroInscripcion" />
+                <ScalarProperty Name="AnoInscripcion" ColumnName="AnoInscripcion" />
+                <ScalarProperty Name="Foja" ColumnName="Foja" />
+                <ScalarProperty Name="PorcentajeDerechoPropietario" ColumnName="PorcentajeDerechoPropietario" />
+                <ScalarProperty Name="RutPropietario" ColumnName="RutPropietario" />
+                <ScalarProperty Name="RolPredial" ColumnName="RolPredial" />
+                <ScalarProperty Name="Manzana" ColumnName="Manzana" />
+                <ScalarProperty Name="Comuna" ColumnName="Comuna" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

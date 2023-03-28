@@ -1,0 +1,111 @@
+﻿@model IEnumerable<UAndes.ICC5103._202301.Models.Enajenacion>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("N° Atención")
+        </th>
+        <th>
+            @Html.DisplayName("Codigo de Naturaleza de Escritura")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Comuna)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Manzana)
+        </th>
+        <th>
+            @Html.DisplayName("Predio")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enajenantes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Adquirientes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foja)
+        </th>
+        <th>
+            @Html.DisplayName("Fecha de Incripcion")
+        </th>
+        <th>
+            @Html.DisplayName("Numero de Inscripcion")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+            @if (item.CNE == "1")
+            {
+                @Html.DisplayName("Compraventa")
+            }
+            else if (item.CNE == "2")
+            {
+                @Html.DisplayName("Herencia")
+            }
+            else if (item.CNE == "3")
+            {
+                @Html.DisplayName("Otro")
+            }
+            else if (item.CNE == "4")
+            {
+                @Html.DisplayName("Resciliación")
+            }
+            else if (item.CNE == "5")
+            {
+                @Html.DisplayName("Transferencia de dominio")
+            }
+            else if (item.CNE == "6")
+            {
+                @Html.DisplayName("Bienes Nacionales")
+            }
+
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Comuna)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Manzana)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RolPredial)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Enajenantes)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adquirientes)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Foja)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FechaInscripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NumeroInscripcion)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,123 @@
+﻿@model UAndes.ICC5103._202301.Models.Multipropietario
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Multipropietario</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.RutPropietario, "Rut del Propietario", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.RutPropietario, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Rut", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.RutPropietario, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Comuna, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Comuna, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Comuna", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.Comuna, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Manzana, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Manzana, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Manzana", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.Manzana, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.RolPredial, "Predio", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.RolPredial, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Predio", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.RolPredial, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PorcentajeDerechoPropietario, "Porcentaje de Derechos", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PorcentajeDerechoPropietario, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Porcentaje %", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.PorcentajeDerechoPropietario, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Foja, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Foja, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Foja", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.Foja, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AnoInscripcion, "Año de Inscripcion", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AnoInscripcion, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese año", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.AnoInscripcion, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NumeroInscripcion, "Numero de Inscripcion", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.NumeroInscripcion, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese Numero de Inscripcion", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.NumeroInscripcion, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FechaInscripcion, "Fecha de Inscripcion", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FechaInscripcion, new { htmlAttributes = new { @class = "form-control", placeholder = "dd/mm/año", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.FechaInscripcion, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AnoVigenciaInicial, "Año Vigencia Inicial", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AnoVigenciaInicial, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese año", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.AnoVigenciaInicial, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AnoVigenciaFinal, "Año Vigencia Final", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AnoVigenciaFinal, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese año", @required = "required" } })
+            @Html.ValidationMessageFor(model => model.AnoVigenciaFinal, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
