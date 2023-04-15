@@ -5,7 +5,7 @@
     ViewBag.Title = "Create";
 }
 
-<h2>NUEVA DECLARACION SOBRE ENAJENACION E INSCRIPCION DE BIENES RAICES</h2>
+<h2>NUEVA DECLARACION SOBRE ENAJENACION E INSCRIPCION DE BIENES RAICES (F2890)</h2>
 
 
 @using (Html.BeginForm())
@@ -14,6 +14,7 @@
 <div class="form-horizontal">
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
     <div class="form-group">
         @Html.LabelFor(model => model.CNE, "Código Naturaleza Escritura", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
@@ -26,7 +27,7 @@
                     new SelectListItem { Text = "Resciliación", Value = "4" },
                     new SelectListItem { Text = "Transferencia de dominio", Value = "5" },
                     new SelectListItem { Text = "Bienes Nacionales", Value = "6" }
-                }, "Value", "Text"), "Seleccione Código Naturalez Escritura", new { @class = "form-control", @required = "required" })
+                }, "Value", "Text"), "Seleccione Código Naturalez Escritura", new { @class = "form-control", @required = "required", id = "Comunas-Dropdown" })
             @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -55,20 +56,20 @@
             @Html.ValidationMessageFor(model => model.RolPredial, "", new { @class = "text-danger" })
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="input-div-enajentes">
         @Html.LabelFor(model => model.Enajenantes, htmlAttributes: new { @class = "control-label col-md-2" })
 
         <div id="input-boxes-enajentes" class="col-md-10">
 
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="inputEnajentes[]" placeholder="Ingrese Rut">
-                <input type="text" class="form-control" name="inputEnajentes[]" placeholder="Ingrese Porcentaje %">
+                <input type="text" class="form-control" name="inputEnajentes[]" placeholder="ingrese % Derechos">
             </div>
 
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="inputEnajentes[]" value="YES">
                 <label class="form-check-label" for="flexCheckDefault">
-                    Conococe en exactitud el porcentaje anotado?
+                    % Derechos No Acreditados
                 </label>
             </div>
 
@@ -81,6 +82,7 @@
 
 
     </div>
+    
 
 
     <div class="form-group">
@@ -90,13 +92,14 @@
 
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="inputAdquirientes[]" placeholder="Ingrese Rut">
-                <input type="text" class="form-control" name="inputAdquirientes[]" placeholder="Ingrese Porcentaje %">
+                <input type="text" class="form-control" name="inputAdquirientes[]" placeholder="ingrese % Derechos">
+
             </div>
 
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="inputAdquirientes[]" value="YES">
                 <label class="form-check-label" for="flexCheckDefault">
-                    Conococe en exactitud el porcentaje anotado?
+                    % Derechos No Acreditados
                 </label>
             </div>
 
@@ -105,11 +108,11 @@
         <div class="col-md-offset-2 col-md-10">
             <button type="button" id="add-box-adquirientes" class="btn btn-primary">Add Box</button>
             <button type="button" id="remove-box-adquirientes" class="btn btn-danger">Remove Box</button>
+            @Html.ValidationMessageFor(model => model.Adquirientes, "", new { @class = "text-danger" })
         </div>
 
+
     </div>
-
-
 
     <div class="form-group">
         @Html.LabelFor(model => model.Foja, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -152,6 +155,7 @@
     @Scripts.Render("~/bundles/jqueryval")
 
 <script>
+
         const inputBoxesEnajentes = document.getElementById("input-boxes-enajentes");
         const addButtonEnajentes = document.getElementById("add-box-enajentes");
         const removeButtonEnajentes = document.getElementById("remove-box-enajentes");
@@ -168,6 +172,22 @@
         addButtonAdquirientes.addEventListener("click", addInputBoxAdquirientes);
         removeButtonAdquirientes.addEventListener("click", removeInputBoxAdquirientes);
 
+        
+        const performDropdownAction = function () {
+            console.log("xd");
+            let current = this.value || document.getElementById('Comunas-Dropdown').value;
+            const EnajenatesDIV = document.getElementById('input-div-enajentes');
+
+            if (current == 1) {
+                EnajenatesDIV.removeAttribute("hidden");
+            }
+            else if (current == 2) {
+                EnajenatesDIV.setAttribute("hidden", "hidden");
+            }
+        }
+
+        document.getElementById('Comunas-Dropdown').addEventListener('change', performDropdownAction);
+
         // Function to add an input box
         function addInputBoxEnajente() {
             const newInputBoxRut = document.createElement("input");
@@ -181,7 +201,7 @@
             const newInputBoxPorcentaje = document.createElement("input");
             newInputBoxPorcentaje.type = "text";
             newInputBoxPorcentaje.name = "inputEnajentes[]";
-            newInputBoxPorcentaje.placeholder = "Ingrese Porcentaje";
+            newInputBoxPorcentaje.placeholder = "ingrese % Derechos";
             newInputBoxPorcentaje.classList.add("form-control");
             newInputBoxPorcentaje.required = "required";
             inputBoxesEnajentes.appendChild(newInputBoxPorcentaje);
@@ -196,7 +216,7 @@
             inputBoxesEnajentes.appendChild(newInputBoxCheck);
 
             const newInputBoxCheckLabel = document.createElement("label");
-            newInputBoxCheckLabel.textContent = "Conococe en exactitud el porcentaje anotado?";
+            newInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
             newInputBoxCheckLabel.classList.add("form-check-label");
             inputBoxesEnajentes.appendChild(newInputBoxCheckLabel);
 
@@ -226,7 +246,7 @@
                 inputBoxesEnajentes.removeChild(lastInputBoxLabel);
             }
         }
-
+        //Funciones addInputBox crean nuevas casillas para añadir nuevo enajenante o adquiriente
         function addInputBoxAdquirientes() {
             const newInputBoxRut = document.createElement("input");
             newInputBoxRut.type = "text";
@@ -239,7 +259,7 @@
             const newInputBoxPorcentaje = document.createElement("input");
             newInputBoxPorcentaje.type = "text";
             newInputBoxPorcentaje.name = "inputAdquirientes[]";
-            newInputBoxPorcentaje.placeholder = "Ingrese Porcentaje";
+            newInputBoxPorcentaje.placeholder = "ingrese % Derechos";
             newInputBoxPorcentaje.classList.add("form-control");
             newInputBoxPorcentaje.required = "required";
             inputBoxesAdquirientes.appendChild(newInputBoxPorcentaje);
@@ -254,7 +274,7 @@
             inputBoxesAdquirientes.appendChild(newInputBoxCheck);
 
             const newInputBoxCheckLabel = document.createElement("label");
-            newInputBoxCheckLabel.textContent = "Conococe en exactitud el porcentaje anotado?";
+            newInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
             newInputBoxCheckLabel.classList.add("form-check-label");
             inputBoxesAdquirientes.appendChild(newInputBoxCheckLabel);
 

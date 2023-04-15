@@ -11,6 +11,7 @@ using UAndes.ICC5103._202301.Models;
 using Newtonsoft.Json;
 using System.Collections;
 
+
 namespace UAndes.ICC5103._202301.Controllers
 {
     public class EnajenacionsController : Controller
@@ -64,15 +65,20 @@ namespace UAndes.ICC5103._202301.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CNE,Comuna,Manzana,RolPredial,Enajenantes,Adquirientes,Foja,FechaInscripcion,NumeroInscripcion")] Enajenacion enajenacion)
         {
+            var comuna = new Comuna();
 
-            
+            List<string> comunas = comuna.ListaDeComunas();
+
+            ViewBag.comunas = comunas;
+
+
+            //  En el caso para la lista de Enajenantes y Adquirientes se debe agregar el valor "NO", esto ocurre cuando
+            //  en el checklist no se agrega el valor "YES", por lo cual se verifica si se agrega o no.
             string keyEnajenate = "inputEnajentes[]";
             string keyAdquiriente = "inputAdquirientes[]";
 
             List<string> ListaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
             List<string> ListaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
-
-
 
             double Comparar1;
             double Comparar2;
@@ -111,14 +117,106 @@ namespace UAndes.ICC5103._202301.Controllers
                 ListaDeAdquirientes.Insert(ListaDeAdquirientes.Count, "NO");
             }
 
-            var jsonEnajente = JsonConvert.SerializeObject(ListaDeEnajenates);
-            var jsonAdquiriente = JsonConvert.SerializeObject(ListaDeAdquirientes);
+
+
+            List<List<string>> ListaEnajenantesFormateada = new List<List<string>>();
+            List<List<string>> ListaAdquirientesFormateada = new List<List<string>>();
+            List<string> ListaTemporal = new List<string>();
+
+            foreach (string value in ListaDeEnajenates) {
+                if (value == "NO" || value == "YES")
+                {
+                    ListaTemporal.Add(value);
+                    ListaEnajenantesFormateada.Add(ListaTemporal.ToList());
+                    ListaTemporal.Clear();
+                }
+                else 
+                {
+                    ListaTemporal.Add(value);
+                }
+                
+    
+            }
+
+            ListaTemporal.Clear();
+            foreach (string value in ListaDeAdquirientes)
+            {
+                if (value == "NO" || value == "YES")
+                {
+                    ListaTemporal.Add(value);
+                    ListaAdquirientesFormateada.Add(ListaTemporal.ToList());
+                    ListaTemporal.Clear();
+
+                }
+                else
+                {
+                    ListaTemporal.Add(value);
+                }
+
+            }
+
+            //Validacion de porcentajes para adquirientes en caso que CNE sea "Regularización de Patrimonio" o "Herencia".
+            if (enajenacion.CNE == "2")
+            {
+                int PorcentajeTotal = 0;
+                List<List<string>> AdquirientesNoAcredidatos = new List<List<string>>();
+                List<List<string>> AdquirientesAcredidatos = new List<List<string>>();
+
+                foreach (List<string> DataAdquriente in ListaAdquirientesFormateada)
+                {
+                    if (DataAdquriente[2] == "YES")
+                    {
+                        AdquirientesNoAcredidatos.Add(DataAdquriente);
+                        continue;
+                    }
+                    else
+                    {
+                        if (DataAdquriente[1].All(char.IsDigit) && DataAdquriente[1] != "")
+                        {
+                            PorcentajeTotal += int.Parse(DataAdquriente[1]);
+                            AdquirientesAcredidatos.Add(DataAdquriente);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("Adquirientes", "Ingrese un valor % valido para los Adquirientes");
+                            View(enajenacion);
+                        }
+                    }
+                }
+                if(PorcentajeTotal > 100)
+                {
+                    ModelState.AddModelError("Adquirientes", "Ingrese una suma de % valido para los Adquirientes");
+
+                    View(enajenacion);
+                }
+                if(AdquirientesNoAcredidatos.Count > 0)
+                {
+                    float PorcentajeRestante = 100 - (float)PorcentajeTotal;
+                    float ReparticionPorcentaje = (float)PorcentajeRestante / (float)AdquirientesNoAcredidatos.Count;
+                    foreach(List<string> DataAdquriente in AdquirientesNoAcredidatos)
+                    {
+                        DataAdquriente[1] = ReparticionPorcentaje.ToString();
+                    }
+                }
+                else if (AdquirientesNoAcredidatos.Count == 0 && PorcentajeTotal < 100)
+                {
+                    ModelState.AddModelError("Adquirientes", "Ingrese una suma de % valido para los Adquirientes");
+
+                    View(enajenacion);
+                }
+
+                AdquirientesAcredidatos.AddRange(AdquirientesNoAcredidatos);
+                ListaAdquirientesFormateada = AdquirientesAcredidatos.ToList();
+            }
+            
+
+            var jsonEnajente = JsonConvert.SerializeObject(ListaEnajenantesFormateada);
+            var jsonAdquiriente = JsonConvert.SerializeObject(ListaAdquirientesFormateada);
 
 
             enajenacion.Enajenantes = jsonEnajente;
             enajenacion.Adquirientes = jsonAdquiriente;
             
-
 
             if (ModelState.IsValid)
             {
