@@ -207,7 +207,11 @@ namespace UAndes.ICC5103._202301.Controllers
 
                 AdquirientesAcredidatos.AddRange(AdquirientesNoAcredidatos);
                 ListaAdquirientesFormateada = AdquirientesAcredidatos.ToList();
+
+                //Creacion de objeto Multipropetiario
+                Multipropietario multipropietario = new Multipropietario();
             }
+
             
 
             var jsonEnajente = JsonConvert.SerializeObject(ListaEnajenantesFormateada);
