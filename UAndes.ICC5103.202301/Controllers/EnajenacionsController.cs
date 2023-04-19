@@ -10,7 +10,7 @@ using System.Web.Mvc;
 using UAndes.ICC5103._202301.Models;
 using Newtonsoft.Json;
 using System.Collections;
-
+using System.Data.SqlClient;
 
 namespace UAndes.ICC5103._202301.Controllers
 {
@@ -86,8 +86,8 @@ namespace UAndes.ICC5103._202301.Controllers
             for (int i = 0; i < ListaDeEnajenates.Count; i++)
             {
                 Comparar1 = (i + 1) % 3;
-                
-                if ( (int)Comparar1 == 0 && i != 0)
+
+                if ((int)Comparar1 == 0 && i != 0)
                 {
                     if (ListaDeEnajenates[i] != "YES" && ListaDeEnajenates[i] != "NO")
                     {
@@ -123,19 +123,20 @@ namespace UAndes.ICC5103._202301.Controllers
             List<List<string>> ListaAdquirientesFormateada = new List<List<string>>();
             List<string> ListaTemporal = new List<string>();
 
-            foreach (string value in ListaDeEnajenates) {
+            foreach (string value in ListaDeEnajenates)
+            {
                 if (value == "NO" || value == "YES")
                 {
                     ListaTemporal.Add(value);
                     ListaEnajenantesFormateada.Add(ListaTemporal.ToList());
                     ListaTemporal.Clear();
                 }
-                else 
+                else
                 {
                     ListaTemporal.Add(value);
                 }
-                
-    
+
+
             }
 
             ListaTemporal.Clear();
@@ -183,17 +184,17 @@ namespace UAndes.ICC5103._202301.Controllers
                         }
                     }
                 }
-                if(PorcentajeTotal > 100)
+                if (PorcentajeTotal > 100)
                 {
                     ModelState.AddModelError("Adquirientes", "Ingrese una suma de % valido para los Adquirientes");
 
                     View(enajenacion);
                 }
-                if(AdquirientesNoAcredidatos.Count > 0)
+                if (AdquirientesNoAcredidatos.Count > 0)
                 {
                     float PorcentajeRestante = 100 - (float)PorcentajeTotal;
                     float ReparticionPorcentaje = (float)PorcentajeRestante / (float)AdquirientesNoAcredidatos.Count;
-                    foreach(List<string> DataAdquriente in AdquirientesNoAcredidatos)
+                    foreach (List<string> DataAdquriente in AdquirientesNoAcredidatos)
                     {
                         DataAdquriente[1] = ReparticionPorcentaje.ToString();
                     }
@@ -208,19 +209,71 @@ namespace UAndes.ICC5103._202301.Controllers
                 AdquirientesAcredidatos.AddRange(AdquirientesNoAcredidatos);
                 ListaAdquirientesFormateada = AdquirientesAcredidatos.ToList();
 
+                var AdquirientesARemplazar = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == enajenacion.FechaInscripcion.Year)
+                    .ToList();
+
+                if (AdquirientesARemplazar.Count > 0)
+                {
+                    foreach (var adquiriente in AdquirientesARemplazar)
+                    {
+                        db.Multipropietario.Remove(adquiriente);
+                        db.SaveChanges();
+                    }
+                }
+
+                var AdquirientesACambiarVigencia = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .ToList();
+
+                if (AdquirientesACambiarVigencia.Count > 0)
+                {
+                    foreach (var adquiriente in AdquirientesACambiarVigencia)
+                    {
+                        adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1;
+                        db.SaveChanges();
+                    }
+                }
+
+                
                 //Creacion de objeto Multipropetiario
-                Multipropietario multipropietario = new Multipropietario();
+                foreach (List<string> adquiriente in ListaAdquirientesFormateada)
+                {
+                    Multipropietario multipropietario = new Multipropietario();
+                    multipropietario.Comuna = enajenacion.Comuna;
+                    multipropietario.Manzana = enajenacion.Manzana;
+                    multipropietario.RolPredial = enajenacion.RolPredial;
+                    multipropietario.RutPropietario = adquiriente[0];
+                    multipropietario.PorcentajeDerechoPropietario = adquiriente[1];
+                    multipropietario.Foja = enajenacion.Foja;
+                    multipropietario.NumeroInscripcion = enajenacion.NumeroInscripcion;
+                    multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
+                    DateTime Fecha = enajenacion.FechaInscripcion;
+                    multipropietario.AnoInscripcion = Fecha.Year;
+                    if ((int)Fecha.Year <= 2019)
+                    {
+                        multipropietario.AnoVigenciaInicial = 2019;
+                    }
+                    else { multipropietario.AnoVigenciaInicial = Fecha.Year; }
+
+                    db.Multipropietario.Add(multipropietario);
+                    db.SaveChanges();
+                }
+
             }
-
-            
-
             var jsonEnajente = JsonConvert.SerializeObject(ListaEnajenantesFormateada);
             var jsonAdquiriente = JsonConvert.SerializeObject(ListaAdquirientesFormateada);
 
-
+            
             enajenacion.Enajenantes = jsonEnajente;
             enajenacion.Adquirientes = jsonAdquiriente;
-            
+
 
             if (ModelState.IsValid)
             {
@@ -228,7 +281,6 @@ namespace UAndes.ICC5103._202301.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(enajenacion);
         }
 

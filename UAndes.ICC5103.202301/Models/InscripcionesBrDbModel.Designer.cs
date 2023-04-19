@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\UAndes.ICC5103.202301-master\UAndes.ICC5103.202301\Models\InscripcionesBrDbModel.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\sdiaz\Desktop\verificablers\UAndes.ICC5103.202301\Models\InscripcionesBrDbModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

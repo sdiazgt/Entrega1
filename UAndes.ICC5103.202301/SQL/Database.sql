@@ -40,11 +40,11 @@ CREATE TABLE [dbo].[Multipropietario](
 	[RutPropietario] [nvarchar](10) NOT NULL,
 	[PorcentajeDerechoPropietario] [nchar](10) NULL,
 	[Foja] [nchar](50) NOT NULL,
-	[AnoInscripcion] [date] NOT NULL,
+	[AnoInscripcion] [int] NOT NULL,
 	[NumeroInscripcion] [nchar](50) NULL,
 	[FechaInscripcion] [date] NOT NULL,
-	[AnoVigenciaInicial] [date] NOT NULL,
-	[AnoVigenciaFinal] [date] NULL
+	[AnoVigenciaInicial] [int] NOT NULL,
+	[AnoVigenciaFinal] [int] NULL
  CONSTRAINT [PK_Multipropietario] PRIMARY KEY CLUSTERED(
 	[Id] ASC
 ))
@@ -58,4 +58,3 @@ INSERT [dbo].[Persona] ([Id], [Rut], [Nombre], [FechaNacimiento], [Email], [Dire
 GO
 SET IDENTITY_INSERT [dbo].[Persona] OFF
 GO
-

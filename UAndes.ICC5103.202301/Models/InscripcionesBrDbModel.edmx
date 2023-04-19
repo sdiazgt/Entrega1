@@ -31,11 +31,11 @@
           <Property Name="RutPropietario" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="PorcentajeDerechoPropietario" Type="nchar" MaxLength="10" />
           <Property Name="Foja" Type="nchar" MaxLength="50" Nullable="false" />
-          <Property Name="AnoInscripcion" Type="date" Nullable="false" />
+          <Property Name="AnoInscripcion" Type="int" Nullable="false" />
           <Property Name="NumeroInscripcion" Type="nchar" MaxLength="50" />
           <Property Name="FechaInscripcion" Type="date" Nullable="false" />
-          <Property Name="AnoVigenciaInicial" Type="date" Nullable="false" />
-          <Property Name="AnoVigenciaFinal" Type="date" />
+          <Property Name="AnoVigenciaInicial" Type="int" Nullable="false" />
+          <Property Name="AnoVigenciaFinal" Type="int" />
         </EntityType>
         <EntityType Name="Persona">
           <Key>
@@ -99,11 +99,11 @@
           <Property Name="RutPropietario" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="PorcentajeDerechoPropietario" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="Foja" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
-          <Property Name="AnoInscripcion" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="AnoInscripcion" Nullable="false" Type="Int32" />
           <Property Name="NumeroInscripcion" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
           <Property Name="FechaInscripcion" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="AnoVigenciaInicial" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="AnoVigenciaFinal" Type="DateTime" Precision="0" />
+          <Property Name="AnoVigenciaInicial" Type="Int32" Nullable="false" />
+          <Property Name="AnoVigenciaFinal" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -142,8 +142,8 @@
           <EntitySetMapping Name="Multipropietario">
             <EntityTypeMapping TypeName="InscripcionesBrDbModel.Multipropietario">
               <MappingFragment StoreEntitySet="Multipropietario">
-                <ScalarProperty Name="AnoVigenciaFinal" ColumnName="AnoVigenciaFinal" />
                 <ScalarProperty Name="AnoVigenciaInicial" ColumnName="AnoVigenciaInicial" />
+                <ScalarProperty Name="AnoVigenciaFinal" ColumnName="AnoVigenciaFinal" />
                 <ScalarProperty Name="FechaInscripcion" ColumnName="FechaInscripcion" />
                 <ScalarProperty Name="NumeroInscripcion" ColumnName="NumeroInscripcion" />
                 <ScalarProperty Name="AnoInscripcion" ColumnName="AnoInscripcion" />
