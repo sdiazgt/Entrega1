@@ -33,11 +33,14 @@ namespace UAndes.ICC5103._202301.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Enajenacion enajenacion = db.Enajenacion.Find(id);
+
             if (enajenacion == null)
             {
                 return HttpNotFound();
             }
+
             return View(enajenacion);
         }
 
@@ -77,81 +80,81 @@ namespace UAndes.ICC5103._202301.Controllers
             string keyEnajenate = "inputEnajentes[]";
             string keyAdquiriente = "inputAdquirientes[]";
 
-            List<string> ListaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
-            List<string> ListaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
+            List<string> listaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
+            List<string> listaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
 
-            double Comparar1;
-            double Comparar2;
+            double valorComparacion1;
+            double valorComparacion2;
 
-            for (int i = 0; i < ListaDeEnajenates.Count; i++)
+            for (int i = 0; i < listaDeEnajenates.Count; i++)
             {
-                Comparar1 = (i + 1) % 3;
+                valorComparacion1 = (i + 1) % 3;
 
-                if ((int)Comparar1 == 0 && i != 0)
+                if ((int)valorComparacion1 == 0 && i != 0)
                 {
-                    if (ListaDeEnajenates[i] != "YES" && ListaDeEnajenates[i] != "NO")
+                    if (listaDeEnajenates[i] != "YES" && listaDeEnajenates[i] != "NO")
                     {
-                        ListaDeEnajenates.Insert(i, "NO");
+                        listaDeEnajenates.Insert(i, "NO");
                     }
                 }
             }
 
-            for (int i = 0; i < ListaDeAdquirientes.Count; i++)
+            for (int i = 0; i < listaDeAdquirientes.Count; i++)
             {
-                Comparar2 = (i + 1) % 3;
-                if ((int)Comparar2 == 0 && i != 0)
+                valorComparacion2 = (i + 1) % 3;
+                if ((int)valorComparacion2 == 0 && i != 0)
                 {
-                    if (ListaDeAdquirientes[i] != "YES" && ListaDeAdquirientes[i] != "NO")
+                    if (listaDeAdquirientes[i] != "YES" && listaDeAdquirientes[i] != "NO")
                     {
-                        ListaDeAdquirientes.Insert(i, "NO");
+                        listaDeAdquirientes.Insert(i, "NO");
                     }
                 }
             }
 
-            if ((ListaDeEnajenates.Count % 3) != 0)
+            if ((listaDeEnajenates.Count % 3) != 0)
             {
-                ListaDeEnajenates.Insert(ListaDeEnajenates.Count, "NO");
+                listaDeEnajenates.Insert(listaDeEnajenates.Count, "NO");
             }
-            if ((ListaDeAdquirientes.Count % 3) != 0)
+            if ((listaDeAdquirientes.Count % 3) != 0)
             {
-                ListaDeAdquirientes.Insert(ListaDeAdquirientes.Count, "NO");
+                listaDeAdquirientes.Insert(listaDeAdquirientes.Count, "NO");
             }
 
 
 
-            List<List<string>> ListaEnajenantesFormateada = new List<List<string>>();
-            List<List<string>> ListaAdquirientesFormateada = new List<List<string>>();
-            List<string> ListaTemporal = new List<string>();
+            List<List<string>> listaEnajenantesFormateada = new List<List<string>>();
+            List<List<string>> listaAdquirientesFormateada = new List<List<string>>();
+            List<string> listaTemporal = new List<string>();
 
-            foreach (string value in ListaDeEnajenates)
+            foreach (string value in listaDeEnajenates)
             {
                 if (value == "NO" || value == "YES")
                 {
-                    ListaTemporal.Add(value);
-                    ListaEnajenantesFormateada.Add(ListaTemporal.ToList());
-                    ListaTemporal.Clear();
+                    listaTemporal.Add(value);
+                    listaEnajenantesFormateada.Add(listaTemporal.ToList());
+                    listaTemporal.Clear();
                 }
                 else
                 {
-                    ListaTemporal.Add(value);
+                    listaTemporal.Add(value);
                 }
 
 
             }
 
-            ListaTemporal.Clear();
-            foreach (string value in ListaDeAdquirientes)
+            listaTemporal.Clear();
+            foreach (string value in listaDeAdquirientes)
             {
                 if (value == "NO" || value == "YES")
                 {
-                    ListaTemporal.Add(value);
-                    ListaAdquirientesFormateada.Add(ListaTemporal.ToList());
-                    ListaTemporal.Clear();
+                    listaTemporal.Add(value);
+                    listaAdquirientesFormateada.Add(listaTemporal.ToList());
+                    listaTemporal.Clear();
 
                 }
                 else
                 {
-                    ListaTemporal.Add(value);
+                    listaTemporal.Add(value);
                 }
 
             }
@@ -159,23 +162,23 @@ namespace UAndes.ICC5103._202301.Controllers
             //Validacion de porcentajes para adquirientes en caso que CNE sea "Regularización de Patrimonio" o "Herencia".
             if (enajenacion.CNE == "2")
             {
-                int PorcentajeTotal = 0;
-                List<List<string>> AdquirientesNoAcredidatos = new List<List<string>>();
-                List<List<string>> AdquirientesAcredidatos = new List<List<string>>();
+                int porcentajeTotal = 0;
+                List<List<string>> adquirientesNoAcredidatos = new List<List<string>>();
+                List<List<string>> adquirientesAcredidatos = new List<List<string>>();
 
-                foreach (List<string> DataAdquriente in ListaAdquirientesFormateada)
+                foreach (List<string> dataAdquriente in listaAdquirientesFormateada)
                 {
-                    if (DataAdquriente[2] == "YES")
+                    if (dataAdquriente[2] == "YES")
                     {
-                        AdquirientesNoAcredidatos.Add(DataAdquriente);
+                        adquirientesNoAcredidatos.Add(dataAdquriente);
                         continue;
                     }
                     else
                     {
-                        if (DataAdquriente[1].All(char.IsDigit) && DataAdquriente[1] != "")
+                        if (dataAdquriente[1].All(char.IsDigit) && dataAdquriente[1] != "")
                         {
-                            PorcentajeTotal += int.Parse(DataAdquriente[1]);
-                            AdquirientesAcredidatos.Add(DataAdquriente);
+                            porcentajeTotal += int.Parse(dataAdquriente[1]);
+                            adquirientesAcredidatos.Add(dataAdquriente);
                         }
                         else
                         {
@@ -184,66 +187,65 @@ namespace UAndes.ICC5103._202301.Controllers
                         }
                     }
                 }
-                if (PorcentajeTotal > 100)
+                if (porcentajeTotal > 100)
                 {
                     ModelState.AddModelError("Adquirientes", "Ingrese una suma de % valido para los Adquirientes");
 
                     View(enajenacion);
                 }
-                if (AdquirientesNoAcredidatos.Count > 0)
+                if (adquirientesNoAcredidatos.Count > 0)
                 {
-                    float PorcentajeRestante = 100 - (float)PorcentajeTotal;
-                    float ReparticionPorcentaje = (float)PorcentajeRestante / (float)AdquirientesNoAcredidatos.Count;
-                    foreach (List<string> DataAdquriente in AdquirientesNoAcredidatos)
+                    float porcentajeRestante = 100 - (float)porcentajeTotal;
+                    float reparticionPorcentaje = (float)porcentajeRestante / (float)adquirientesNoAcredidatos.Count;
+                    foreach (List<string> dataAdquriente in adquirientesNoAcredidatos)
                     {
-                        DataAdquriente[1] = ReparticionPorcentaje.ToString();
+                        dataAdquriente[1] = reparticionPorcentaje.ToString();
                     }
                 }
-                else if (AdquirientesNoAcredidatos.Count == 0 && PorcentajeTotal < 100)
+                else if (adquirientesNoAcredidatos.Count == 0 && porcentajeTotal < 100)
                 {
                     ModelState.AddModelError("Adquirientes", "Ingrese una suma de % valido para los Adquirientes");
 
                     View(enajenacion);
                 }
 
-                AdquirientesAcredidatos.AddRange(AdquirientesNoAcredidatos);
-                ListaAdquirientesFormateada = AdquirientesAcredidatos.ToList();
+                adquirientesAcredidatos.AddRange(adquirientesNoAcredidatos);
+                listaAdquirientesFormateada = adquirientesAcredidatos.ToList();
 
-                var AdquirientesARemplazar = db.Multipropietario
+                var adquirientesARemplazar = db.Multipropietario
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
                     .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
                     .Where(Data4 => Data4.AnoVigenciaInicial == enajenacion.FechaInscripcion.Year)
                     .ToList();
 
-                if (AdquirientesARemplazar.Count > 0)
+                if (adquirientesARemplazar.Count > 0)
                 {
-                    foreach (var adquiriente in AdquirientesARemplazar)
+                    foreach (var adquiriente in adquirientesARemplazar)
                     {
                         db.Multipropietario.Remove(adquiriente);
                         db.SaveChanges();
                     }
                 }
 
-                var AdquirientesACambiarVigencia = db.Multipropietario
+                var adquirientesACambiarVigencia = db.Multipropietario
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
                     .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
                     .Where(Data4 => Data4.AnoVigenciaFinal == null)
                     .ToList();
 
-                if (AdquirientesACambiarVigencia.Count > 0)
+                if (adquirientesACambiarVigencia.Count > 0)
                 {
-                    foreach (var adquiriente in AdquirientesACambiarVigencia)
+                    foreach (var adquiriente in adquirientesACambiarVigencia)
                     {
                         adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1;
                         db.SaveChanges();
                     }
                 }
-
-                
+   
                 //Creacion de objeto Multipropetiario
-                foreach (List<string> adquiriente in ListaAdquirientesFormateada)
+                foreach (List<string> adquiriente in listaAdquirientesFormateada)
                 {
                     Multipropietario multipropietario = new Multipropietario();
                     multipropietario.Comuna = enajenacion.Comuna;
@@ -267,8 +269,8 @@ namespace UAndes.ICC5103._202301.Controllers
                 }
 
             }
-            var jsonEnajente = JsonConvert.SerializeObject(ListaEnajenantesFormateada);
-            var jsonAdquiriente = JsonConvert.SerializeObject(ListaAdquirientesFormateada);
+            var jsonEnajente = JsonConvert.SerializeObject(listaEnajenantesFormateada);
+            var jsonAdquiriente = JsonConvert.SerializeObject(listaAdquirientesFormateada);
 
             
             enajenacion.Enajenantes = jsonEnajente;

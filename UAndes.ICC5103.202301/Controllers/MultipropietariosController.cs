@@ -15,9 +15,24 @@ namespace UAndes.ICC5103._202301.Controllers
         private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
         // GET: Multipropietarios
-        public ActionResult Index()
+        public ActionResult Index(string comuna, string manzana, string predio, string año)
         {
-            return View(db.Multipropietario.ToList());
+            var listaComunas = new Comuna();
+
+            List<string> comunas = listaComunas.ListaDeComunas();
+
+            ViewBag.comunas = comunas;
+
+            int añoProcesado = 0;
+            if (String.IsNullOrEmpty(año) != true)
+            {
+                añoProcesado = int.Parse(año) -1;
+            }
+
+            return View(db.Multipropietario.Where(x => (x.Comuna == comuna || comuna==null) &&
+                                            (x.Manzana == manzana.ToString() || manzana==null) &&
+                                            (x.RolPredial == predio.ToString() || predio==null) &&
+                                            (x.AnoVigenciaInicial >= añoProcesado || añoProcesado == 0)).ToList());
         }
 
         // GET: Multipropietarios/Details/5

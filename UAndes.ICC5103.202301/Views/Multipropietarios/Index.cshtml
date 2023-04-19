@@ -9,6 +9,24 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@using (Html.BeginForm("Index", "Multipropietarios", FormMethod.Get))
+{
+    <div class="form-group">
+        <b> Opciones de busqueda: </b>
+        @Html.DropDownList("comuna", new SelectList(ViewBag.comunas), "Comuna", new { @class = "form-control" })
+
+
+        @Html.Editor("manzana", new { htmlAttributes = new { @class = "form-control", placeholder = "manzana" } })
+        @Html.Editor("predio", new { htmlAttributes = new { @class = "form-control", placeholder = "predio" } })
+        @Html.Editor("ano", new { htmlAttributes = new { @class = "form-control", placeholder = "año" } })
+        <input type="submit" name="submit" value="Search" />
+    </div>
+    
+
+
+    
+}
 <table class="table">
     <tr>
         <th>
@@ -47,7 +65,8 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+        {
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Comuna)
@@ -83,11 +102,13 @@
             @Html.DisplayFor(modelItem => item.AnoVigenciaFinal)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id
+                }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id
+}) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>
-}
+        }
 
 </table>

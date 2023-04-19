@@ -7,7 +7,7 @@
 
 <h2>NUEVA DECLARACION SOBRE ENAJENACION E INSCRIPCION DE BIENES RAICES (F2890)</h2>
 
-
+    
 
 @using (Html.BeginForm())
 {
@@ -167,15 +167,14 @@
 
 
         // Add event listeners
-        addButtonEnajentes.addEventListener("click", addInputBoxEnajente);
-        removeButtonEnajentes.addEventListener("click", removeInputBoxEnajente);
+        addButtonEnajentes.addEventListener("click", AddInputBoxEnajente);
+        removeButtonEnajentes.addEventListener("click", RemoveInputBoxEnajente);
 
-        addButtonAdquirientes.addEventListener("click", addInputBoxAdquirientes);
-        removeButtonAdquirientes.addEventListener("click", removeInputBoxAdquirientes);
+        addButtonAdquirientes.addEventListener("click", AddInputBoxAdquirientes);
+        removeButtonAdquirientes.addEventListener("click", RemoveInputBoxAdquirientes);
 
         
-        const performDropdownAction = function () {
-            console.log("xd");
+        const PerformDropdownAction = function () {
             let current = this.value || document.getElementById('Comunas-Dropdown').value;
             const EnajenatesDIV = document.getElementById('input-div-enajentes');
 
@@ -187,119 +186,120 @@
             }
         }
 
-        document.getElementById('Comunas-Dropdown').addEventListener('change', performDropdownAction);
+        document.getElementById('Comunas-Dropdown').addEventListener('change', PerformDropdownAction);
 
         // Function to add an input box
-        function addInputBoxEnajente() {
-            const newInputBoxRut = document.createElement("input");
-            newInputBoxRut.type = "text";
-            newInputBoxRut.name = "inputEnajentes[]";
-            newInputBoxRut.placeholder = "Ingrese Rut";
-            newInputBoxRut.classList.add("form-control");
-            newInputBoxRut.required = "required";
-            inputBoxesEnajentes.appendChild(newInputBoxRut);
+        function AddInputBoxEnajente() {
+            const NewInputBoxRut = document.createElement("input");
+            NewInputBoxRut.type = "text";
+            NewInputBoxRut.name = "inputEnajentes[]";
+            NewInputBoxRut.placeholder = "Ingrese Rut";
+            NewInputBoxRut.classList.add("form-control");
+            NewInputBoxRut.required = "required";
+            inputBoxesEnajentes.appendChild(NewInputBoxRut);
 
-            const newInputBoxPorcentaje = document.createElement("input");
-            newInputBoxPorcentaje.type = "text";
-            newInputBoxPorcentaje.name = "inputEnajentes[]";
-            newInputBoxPorcentaje.placeholder = "ingrese % Derechos";
-            newInputBoxPorcentaje.classList.add("form-control");
-            newInputBoxPorcentaje.required = "required";
-            inputBoxesEnajentes.appendChild(newInputBoxPorcentaje);
+            const NewInputBoxPorcentaje = document.createElement("input");
+            NewInputBoxPorcentaje.type = "text";
+            NewInputBoxPorcentaje.name = "inputEnajentes[]";
+            NewInputBoxPorcentaje.placeholder = "ingrese % Derechos";
+            NewInputBoxPorcentaje.classList.add("form-control");
+            NewInputBoxPorcentaje.required = "required";
+            inputBoxesEnajentes.appendChild(NewInputBoxPorcentaje);
 
-            const newInputBoxCheck = document.createElement("input");
-            newInputBoxCheck.type = "checkbox";
-            newInputBoxCheck.name = "inputEnajentes[]";
-            newInputBoxCheck.value = "YES";
+            const NewInputBoxCheck = document.createElement("input");
+            NewInputBoxCheck.type = "checkbox";
+            NewInputBoxCheck.name = "inputEnajentes[]";
+            NewInputBoxCheck.value = "YES";
             
             
-            newInputBoxCheck.classList.add("form-check");
-            inputBoxesEnajentes.appendChild(newInputBoxCheck);
+            NewInputBoxCheck.classList.add("form-check");
+            inputBoxesEnajentes.appendChild(NewInputBoxCheck);
 
-            const newInputBoxCheckLabel = document.createElement("label");
-            newInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
-            newInputBoxCheckLabel.classList.add("form-check-label");
-            inputBoxesEnajentes.appendChild(newInputBoxCheckLabel);
+            const NewInputBoxCheckLabel = document.createElement("label");
+            NewInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
+            NewInputBoxCheckLabel.classList.add("form-check-label");
+            inputBoxesEnajentes.appendChild(NewInputBoxCheckLabel);
 
 
 
         }
 
         // La accion se repite 4 veces para elimar las casillas Rut, Porcentaje y Check junto a su Label
-        function removeInputBoxEnajente() {
-            const lastInputBoxRut = inputBoxesEnajentes.lastElementChild;
-            if (lastInputBoxRut !== null) {
-                inputBoxesEnajentes.removeChild(lastInputBoxRut);
+        function RemoveInputBoxEnajente() {
+            const LastInputBoxRut = inputBoxesEnajentes.lastElementChild;
+            if (LastInputBoxRut !== null) {
+                inputBoxesEnajentes.removeChild(LastInputBoxRut);
             }
 
-            const lastInputBoxPorcentaje = inputBoxesEnajentes.lastElementChild;
-            if (lastInputBoxPorcentaje !== null) {
-                inputBoxesEnajentes.removeChild(lastInputBoxPorcentaje);
+            const LastInputBoxPorcentaje = inputBoxesEnajentes.lastElementChild;
+            if (LastInputBoxPorcentaje !== null) {
+                inputBoxesEnajentes.removeChild(LastInputBoxPorcentaje);
             }
 
-            const lastInputBoxCheck = inputBoxesEnajentes.lastElementChild;
-            if (lastInputBoxCheck !== null) {
-                inputBoxesEnajentes.removeChild(lastInputBoxCheck);
+            const LastInputBoxCheck = inputBoxesEnajentes.lastElementChild;
+            if (LastInputBoxCheck !== null) {
+                inputBoxesEnajentes.removeChild(LastInputBoxCheck);
             }
 
-            const lastInputBoxLabel = inputBoxesEnajentes.lastElementChild;
-            if (lastInputBoxLabel !== null) {
-                inputBoxesEnajentes.removeChild(lastInputBoxLabel);
+            const LastInputBoxLabel = inputBoxesEnajentes.lastElementChild;
+            if (LastInputBoxLabel !== null) {
+                inputBoxesEnajentes.removeChild(LastInputBoxLabel);
             }
         }
+
         //Funciones addInputBox crean nuevas casillas para añadir nuevo enajenante o adquiriente
-        function addInputBoxAdquirientes() {
-            const newInputBoxRut = document.createElement("input");
-            newInputBoxRut.type = "text";
-            newInputBoxRut.name = "inputAdquirientes[]";
-            newInputBoxRut.placeholder = "Ingrese Rut";
-            newInputBoxRut.classList.add("form-control");
-            newInputBoxRut.required = "required";
-            inputBoxesAdquirientes.appendChild(newInputBoxRut);
+        function AddInputBoxAdquirientes() {
+            const NewInputBoxRut = document.createElement("input");
+            NewInputBoxRut.type = "text";
+            NewInputBoxRut.name = "inputAdquirientes[]";
+            NewInputBoxRut.placeholder = "Ingrese Rut";
+            NewInputBoxRut.classList.add("form-control");
+            NewInputBoxRut.required = "required";
+            inputBoxesAdquirientes.appendChild(NewInputBoxRut);
 
-            const newInputBoxPorcentaje = document.createElement("input");
-            newInputBoxPorcentaje.type = "text";
-            newInputBoxPorcentaje.name = "inputAdquirientes[]";
-            newInputBoxPorcentaje.placeholder = "ingrese % Derechos";
-            newInputBoxPorcentaje.classList.add("form-control");
-            newInputBoxPorcentaje.required = "required";
-            inputBoxesAdquirientes.appendChild(newInputBoxPorcentaje);
+            const NewInputBoxPorcentaje = document.createElement("input");
+            NewInputBoxPorcentaje.type = "text";
+            NewInputBoxPorcentaje.name = "inputAdquirientes[]";
+            NewInputBoxPorcentaje.placeholder = "ingrese % Derechos";
+            NewInputBoxPorcentaje.classList.add("form-control");
+            NewInputBoxPorcentaje.required = "required";
+            inputBoxesAdquirientes.appendChild(NewInputBoxPorcentaje);
 
-            const newInputBoxCheck = document.createElement("input");
-            newInputBoxCheck.type = "checkbox";
-            newInputBoxCheck.name = "inputAdquirientes[]";
-            newInputBoxCheck.value = "YES";
+            const NewInputBoxCheck = document.createElement("input");
+            NewInputBoxCheck.type = "checkbox";
+            NewInputBoxCheck.name = "inputAdquirientes[]";
+            NewInputBoxCheck.value = "YES";
             
-            newInputBoxCheck.classList.add("form-check");
+            NewInputBoxCheck.classList.add("form-check");
             
-            inputBoxesAdquirientes.appendChild(newInputBoxCheck);
+            inputBoxesAdquirientes.appendChild(NewInputBoxCheck);
 
-            const newInputBoxCheckLabel = document.createElement("label");
-            newInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
-            newInputBoxCheckLabel.classList.add("form-check-label");
-            inputBoxesAdquirientes.appendChild(newInputBoxCheckLabel);
+            const NewInputBoxCheckLabel = document.createElement("label");
+            NewInputBoxCheckLabel.textContent = "% Derechos No Acreditados";
+            NewInputBoxCheckLabel.classList.add("form-check-label");
+            inputBoxesAdquirientes.appendChild(NewInputBoxCheckLabel);
 
         }
 
-        function removeInputBoxAdquirientes() {
-            const lastInputBoxRut = inputBoxesAdquirientes.lastElementChild;
-            if (lastInputBoxRut !== null) {
-                inputBoxesAdquirientes.removeChild(lastInputBoxRut);
+        function RemoveInputBoxAdquirientes() {
+            const LastInputBoxRut = inputBoxesAdquirientes.lastElementChild;
+            if (LastInputBoxRut !== null) {
+                inputBoxesAdquirientes.removeChild(LastInputBoxRut);
             }
 
-            const lastInputBoxPorcentaje = inputBoxesAdquirientes.lastElementChild;
-            if (lastInputBoxPorcentaje !== null) {
-                inputBoxesAdquirientes.removeChild(lastInputBoxPorcentaje);
+            const LastInputBoxPorcentaje = inputBoxesAdquirientes.lastElementChild;
+            if (LastInputBoxPorcentaje !== null) {
+                inputBoxesAdquirientes.removeChild(LastInputBoxPorcentaje);
             }
 
-            const lastInputBoxCheck = inputBoxesAdquirientes.lastElementChild;
-            if (lastInputBoxCheck !== null) {
-                inputBoxesAdquirientes.removeChild(lastInputBoxCheck);
+            const LastInputBoxCheck = inputBoxesAdquirientes.lastElementChild;
+            if (LastInputBoxCheck !== null) {
+                inputBoxesAdquirientes.removeChild(LastInputBoxCheck);
             }
 
-            const lastInputBoxLabel = inputBoxesAdquirientes.lastElementChild;
-            if (lastInputBoxLabel !== null) {
-                inputBoxesAdquirientes.removeChild(lastInputBoxLabel);
+            const LastInputBoxLabel = inputBoxesAdquirientes.lastElementChild;
+            if (LastInputBoxLabel !== null) {
+                inputBoxesAdquirientes.removeChild(LastInputBoxLabel);
             }
         }
 
