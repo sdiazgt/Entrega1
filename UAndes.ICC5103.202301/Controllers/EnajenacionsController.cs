@@ -80,11 +80,15 @@ namespace UAndes.ICC5103._202301.Controllers
             string keyEnajenate = "inputEnajentes[]";
             string keyAdquiriente = "inputAdquirientes[]";
 
+            string regularizacionDePatrimonio = "2";
+
             List<string> listaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
             List<string> listaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
 
             double valorComparacion1;
             double valorComparacion2;
+
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
 
             for (int i = 0; i < listaDeEnajenates.Count; i++)
             {
@@ -92,9 +96,9 @@ namespace UAndes.ICC5103._202301.Controllers
 
                 if ((int)valorComparacion1 == 0 && i != 0)
                 {
-                    if (listaDeEnajenates[i] != "YES" && listaDeEnajenates[i] != "NO")
+                    if (listaDeEnajenates[i] != stringsAVerificar[0] && listaDeEnajenates[i] != stringsAVerificar[1])
                     {
-                        listaDeEnajenates.Insert(i, "NO");
+                        listaDeEnajenates.Insert(i, stringsAVerificar[1]);
                     }
                 }
             }
@@ -104,20 +108,20 @@ namespace UAndes.ICC5103._202301.Controllers
                 valorComparacion2 = (i + 1) % 3;
                 if ((int)valorComparacion2 == 0 && i != 0)
                 {
-                    if (listaDeAdquirientes[i] != "YES" && listaDeAdquirientes[i] != "NO")
+                    if (listaDeAdquirientes[i] != stringsAVerificar[0] && listaDeAdquirientes[i] != stringsAVerificar[1])
                     {
-                        listaDeAdquirientes.Insert(i, "NO");
+                        listaDeAdquirientes.Insert(i, stringsAVerificar[1]);
                     }
                 }
             }
 
             if ((listaDeEnajenates.Count % 3) != 0)
             {
-                listaDeEnajenates.Insert(listaDeEnajenates.Count, "NO");
+                listaDeEnajenates.Insert(listaDeEnajenates.Count, stringsAVerificar[1]);
             }
             if ((listaDeAdquirientes.Count % 3) != 0)
             {
-                listaDeAdquirientes.Insert(listaDeAdquirientes.Count, "NO");
+                listaDeAdquirientes.Insert(listaDeAdquirientes.Count, stringsAVerificar[1]);
             }
 
 
@@ -128,7 +132,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
             foreach (string value in listaDeEnajenates)
             {
-                if (value == "NO" || value == "YES")
+                if (value == stringsAVerificar[1] || value == stringsAVerificar[0])
                 {
                     listaTemporal.Add(value);
                     listaEnajenantesFormateada.Add(listaTemporal.ToList());
@@ -145,7 +149,7 @@ namespace UAndes.ICC5103._202301.Controllers
             listaTemporal.Clear();
             foreach (string value in listaDeAdquirientes)
             {
-                if (value == "NO" || value == "YES")
+                if (value == stringsAVerificar[1] || value == stringsAVerificar[0])
                 {
                     listaTemporal.Add(value);
                     listaAdquirientesFormateada.Add(listaTemporal.ToList());
@@ -160,7 +164,7 @@ namespace UAndes.ICC5103._202301.Controllers
             }
 
             //Validacion de porcentajes para adquirientes en caso que CNE sea "Regularización de Patrimonio" o "Herencia".
-            if (enajenacion.CNE == "2")
+            if (enajenacion.CNE == regularizacionDePatrimonio)
             {
                 int porcentajeTotal = 0;
                 List<List<string>> adquirientesNoAcredidatos = new List<List<string>>();
@@ -168,7 +172,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
                 foreach (List<string> dataAdquriente in listaAdquirientesFormateada)
                 {
-                    if (dataAdquriente[2] == "YES")
+                    if (dataAdquriente[2] == stringsAVerificar[0])
                     {
                         adquirientesNoAcredidatos.Add(dataAdquriente);
                         continue;
@@ -243,8 +247,9 @@ namespace UAndes.ICC5103._202301.Controllers
                         db.SaveChanges();
                     }
                 }
-   
+
                 //Creacion de objeto Multipropetiario
+                int anoMinimo = 2019;
                 foreach (List<string> adquiriente in listaAdquirientesFormateada)
                 {
                     Multipropietario multipropietario = new Multipropietario();
@@ -258,9 +263,9 @@ namespace UAndes.ICC5103._202301.Controllers
                     multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
                     DateTime Fecha = enajenacion.FechaInscripcion;
                     multipropietario.AnoInscripcion = Fecha.Year;
-                    if ((int)Fecha.Year <= 2019)
+                    if ((int)Fecha.Year <= anoMinimo)
                     {
-                        multipropietario.AnoVigenciaInicial = 2019;
+                        multipropietario.AnoVigenciaInicial = anoMinimo;
                     }
                     else { multipropietario.AnoVigenciaInicial = Fecha.Year; }
 
