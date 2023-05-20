@@ -18,7 +18,21 @@ namespace UAndes.ICC5103._202301.Controllers
     {
         private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
+        public int AnoMaximoVigenciaFinalMultipropietario()
+        {
+            List<Multipropietario> multipropietarios = db.Multipropietario.ToList();
 
+            int anoMaximo = 0;
+
+            foreach (Multipropietario multipropietario in multipropietarios)
+            {
+                if (multipropietario.AnoVigenciaInicial != null && multipropietario.AnoVigenciaInicial > anoMaximo)
+                {
+                    anoMaximo = multipropietario.AnoVigenciaInicial;
+                }
+            }
+            return anoMaximo;
+        }
 
         // GET: Enajenacions
         public ActionResult Index()
@@ -57,10 +71,6 @@ namespace UAndes.ICC5103._202301.Controllers
             return View();
         }
 
-
-
-
-
         // POST: Enajenacions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -74,7 +84,6 @@ namespace UAndes.ICC5103._202301.Controllers
 
             ViewBag.comunas = comunas;
 
-
             //  En el caso para la lista de Enajenantes y Adquirientes se debe agregar el valor "NO", esto ocurre cuando
             //  en el checklist no se agrega el valor "YES", por lo cual se verifica si se agrega o no.
             string keyEnajenate = "inputEnajentes[]";
@@ -87,6 +96,8 @@ namespace UAndes.ICC5103._202301.Controllers
 
             double valorComparacion1;
             double valorComparacion2;
+
+            int anoMinimo = 2019;
 
             List<string> stringsAVerificar = new List<string> { "YES", "NO" };
 
@@ -227,8 +238,11 @@ namespace UAndes.ICC5103._202301.Controllers
                 {
                     foreach (var adquiriente in adquirientesARemplazar)
                     {
-                        db.Multipropietario.Remove(adquiriente);
-                        db.SaveChanges();
+                        if ( int.Parse(adquiriente.NumeroInscripcion) <= int.Parse(enajenacion.NumeroInscripcion))
+                        {
+                            db.Multipropietario.Remove(adquiriente);
+                            db.SaveChanges();
+                        }
                     }
                 }
 
@@ -236,20 +250,33 @@ namespace UAndes.ICC5103._202301.Controllers
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
                     .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
-                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null && Data4.AnoVigenciaInicial < enajenacion.FechaInscripcion.Year)
                     .ToList();
 
                 if (adquirientesACambiarVigencia.Count > 0)
                 {
                     foreach (var adquiriente in adquirientesACambiarVigencia)
                     {
-                        adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1;
+                        if ((int)adquiriente.AnoVigenciaInicial <= anoMinimo)
+                        {
+                            adquiriente.AnoVigenciaFinal = anoMinimo;
+                        }
+                        else { adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1; }
                         db.SaveChanges();
                     }
                 }
 
+                
+
+                var adquirientesConFechaMenor = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null && Data4.AnoVigenciaInicial < enajenacion.FechaInscripcion.Year)
+                    .ToList();
+
                 //Creacion de objeto Multipropetiario
-                int anoMinimo = 2019;
+
                 foreach (List<string> adquiriente in listaAdquirientesFormateada)
                 {
                     Multipropietario multipropietario = new Multipropietario();
@@ -263,11 +290,22 @@ namespace UAndes.ICC5103._202301.Controllers
                     multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
                     DateTime Fecha = enajenacion.FechaInscripcion;
                     multipropietario.AnoInscripcion = Fecha.Year;
+                    int fechaVigenciaFinal;
                     if ((int)Fecha.Year <= anoMinimo)
                     {
                         multipropietario.AnoVigenciaInicial = anoMinimo;
+                        fechaVigenciaFinal = anoMinimo;
                     }
-                    else { multipropietario.AnoVigenciaInicial = Fecha.Year; }
+                    else
+                    { 
+                        multipropietario.AnoVigenciaInicial = Fecha.Year;
+                        fechaVigenciaFinal = Fecha.Year;
+                    }
+
+                    if (AnoMaximoVigenciaFinalMultipropietario() > fechaVigenciaFinal)
+                    {
+                        multipropietario.AnoVigenciaFinal = fechaVigenciaFinal;
+                    }
 
                     db.Multipropietario.Add(multipropietario);
                     db.SaveChanges();

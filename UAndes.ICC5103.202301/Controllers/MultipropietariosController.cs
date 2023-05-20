@@ -14,25 +14,66 @@ namespace UAndes.ICC5103._202301.Controllers
     {
         private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
-        // GET: Multipropietarios
-        public ActionResult Index(string comuna, string manzana, string predio, string año)
+        public bool EsNumero(string numero)
         {
+            var esNumero = int.TryParse(numero, out int n);
+            return esNumero;
+        }
+
+        
+
+
+        // GET: Multipropietarios
+        public ActionResult Index(string comuna, string manzana, string predio, string ano)
+        {
+
+            comuna = comuna ?? "";
+            manzana = manzana ?? "";
+            predio = predio ?? "";
+            ano = ano ?? "";
+
             var listaComunas = new Comuna();
 
             List<string> comunas = listaComunas.ListaDeComunas();
 
             ViewBag.comunas = comunas;
 
-            int añoProcesado = 0;
-            if (String.IsNullOrEmpty(año) != true)
+            if (string.IsNullOrEmpty(comuna) && string.IsNullOrEmpty(manzana) && string.IsNullOrEmpty(predio) && string.IsNullOrEmpty(ano))
             {
-                añoProcesado = int.Parse(año) -1;
+                return View(db.Multipropietario.ToList());
             }
 
-            return View(db.Multipropietario.Where(x => (x.Comuna == comuna || comuna==null) &&
-                                            (x.Manzana == manzana.ToString() || manzana==null) &&
-                                            (x.RolPredial == predio.ToString() || predio==null) &&
-                                            (x.AnoVigenciaInicial >= añoProcesado || añoProcesado == 0)).ToList());
+            int anoProcesado = 0;
+            if (String.IsNullOrEmpty(ano) != true)
+            {
+                anoProcesado = int.Parse(ano);
+            }
+
+            List<Multipropietario> multipropietariosBusqueda = db.Multipropietario.Where(item =>
+                                            (item.Comuna == comuna || string.IsNullOrEmpty(comuna)) &&
+                                            (item.Manzana == manzana.ToString() || string.IsNullOrEmpty(manzana)) &&
+                                            (item.RolPredial == predio.ToString() || string.IsNullOrEmpty(predio)) &&
+                                            (item.AnoVigenciaFinal == anoProcesado)
+                                            ).ToList();
+
+            if (multipropietariosBusqueda.Count > 0)
+            {
+                return View(multipropietariosBusqueda);
+            }
+
+            List<Multipropietario> multipropietariosVigentes = db.Multipropietario.Where(item =>
+                                            (item.AnoVigenciaFinal == null)
+                                            ).ToList();
+
+            if (multipropietariosVigentes.Count > 0)
+            {
+                return View(multipropietariosVigentes);
+            }
+            else
+            {
+                return View();
+            }
+
         }
 
         // GET: Multipropietarios/Details/5
