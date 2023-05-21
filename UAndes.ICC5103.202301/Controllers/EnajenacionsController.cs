@@ -34,6 +34,44 @@ namespace UAndes.ICC5103._202301.Controllers
             return anoMaximo;
         }
 
+        public void CrearMultipropietario(List<List<string>> listaAdquirientes, Enajenacion enajenacion)
+        {
+            int anoMinimo = 2019;
+            foreach (List<string> adquiriente in listaAdquirientes)
+            {
+                Multipropietario multipropietario = new Multipropietario();
+                multipropietario.Comuna = enajenacion.Comuna;
+                multipropietario.Manzana = enajenacion.Manzana;
+                multipropietario.RolPredial = enajenacion.RolPredial;
+                multipropietario.RutPropietario = adquiriente[0];
+                multipropietario.PorcentajeDerechoPropietario = adquiriente[1];
+                multipropietario.Foja = enajenacion.Foja;
+                multipropietario.NumeroInscripcion = enajenacion.NumeroInscripcion;
+                multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
+                DateTime Fecha = enajenacion.FechaInscripcion;
+                multipropietario.AnoInscripcion = Fecha.Year;
+                int fechaVigenciaFinal;
+                if ((int)Fecha.Year <= anoMinimo)
+                {
+                    multipropietario.AnoVigenciaInicial = anoMinimo;
+                    fechaVigenciaFinal = anoMinimo;
+                }
+                else
+                {
+                    multipropietario.AnoVigenciaInicial = Fecha.Year;
+                    fechaVigenciaFinal = Fecha.Year;
+                }
+
+                if (AnoMaximoVigenciaFinalMultipropietario() > fechaVigenciaFinal)
+                {
+                    multipropietario.AnoVigenciaFinal = fechaVigenciaFinal;
+                }
+
+                db.Multipropietario.Add(multipropietario);
+                db.SaveChanges();
+            }
+        }
+
         // GET: Enajenacions
         public ActionResult Index()
         {
@@ -71,11 +109,7 @@ namespace UAndes.ICC5103._202301.Controllers
             return View();
         }
 
-        // POST: Enajenacions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        
 
         public void casoAdquiriente5( List<List<string>> Adquirientes, List<List<string>> Enajenantes, Enajenacion enajenacion)
         {
@@ -101,11 +135,15 @@ namespace UAndes.ICC5103._202301.Controllers
                 {
                     int nuevoPorcenataje = int.Parse(datosActuales[0].PorcentajeDerechoPropietario) - (PorcentajeEnajenando * int.Parse(datosActuales[0].PorcentajeDerechoPropietario)) / 100;
                 }
-
-                
             }
 
         }
+
+        // POST: Enajenacions/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CNE,Comuna,Manzana,RolPredial,Enajenantes,Adquirientes,Foja,FechaInscripcion,NumeroInscripcion")] Enajenacion enajenacion)
         {
             var comuna = new Comuna();
