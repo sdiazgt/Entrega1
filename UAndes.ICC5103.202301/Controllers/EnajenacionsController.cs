@@ -133,8 +133,14 @@ namespace UAndes.ICC5103._202301.Controllers
 
                 if (PorcentajeAAdquirir > 0 && PorcentajeAAdquirir < 100)
                 {
-                    int nuevoPorcenataje = int.Parse(datosActuales[0].PorcentajeDerechoPropietario) - (PorcentajeEnajenando * int.Parse(datosActuales[0].PorcentajeDerechoPropietario)) / 100;
+                    int nuevoPorcentaje = int.Parse(datosActuales[0].PorcentajeDerechoPropietario) - (PorcentajeEnajenando * int.Parse(datosActuales[0].PorcentajeDerechoPropietario)) / 100;
+                    datosActuales[0].PorcentajeDerechoPropietario = (int.Parse(datosActuales[0].PorcentajeDerechoPropietario) - nuevoPorcentaje).ToString();
+                    db.SaveChanges();
+                    Adquirientes[0][1] = nuevoPorcentaje.ToString();
+                    CrearMultipropietario(Adquirientes, enajenacion);
+                    return;
                 }
+                
             }
 
         }
