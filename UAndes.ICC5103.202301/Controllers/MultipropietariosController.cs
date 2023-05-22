@@ -60,20 +60,19 @@ namespace UAndes.ICC5103._202301.Controllers
             {
                 return View(multipropietariosBusqueda);
             }
-
-            List<Multipropietario> multipropietariosVigentes = db.Multipropietario.Where(item =>
+            else
+            {
+                List<Multipropietario> multipropietariosVigentes = db.Multipropietario.Where(item =>
+                                            (item.Comuna == comuna || string.IsNullOrEmpty(comuna)) &&
+                                            (item.Manzana == manzana.ToString() || string.IsNullOrEmpty(manzana)) &&
+                                            (item.RolPredial == predio.ToString() || string.IsNullOrEmpty(predio)) &&
+                                            (item.AnoVigenciaInicial >= anoProcesado) &&
                                             (item.AnoVigenciaFinal == null)
                                             ).ToList();
 
-            if (multipropietariosVigentes.Count > 0)
-            {
+              
                 return View(multipropietariosVigentes);
             }
-            else
-            {
-                return View();
-            }
-
         }
 
         // GET: Multipropietarios/Details/5
