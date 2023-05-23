@@ -18,7 +18,563 @@ namespace UAndes.ICC5103._202301.Controllers
     {
         private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
+        public int AnoMaximoVigenciaFinalMultipropietario()
+        {
+            List<Multipropietario> multipropietarios = db.Multipropietario.ToList();
 
+            int anoMaximo = 0;
+
+            foreach (Multipropietario multipropietario in multipropietarios)
+            {
+                if (multipropietario.AnoVigenciaInicial != null && multipropietario.AnoVigenciaInicial > anoMaximo)
+                {
+                    anoMaximo = multipropietario.AnoVigenciaInicial;
+                }
+            }
+            return anoMaximo;
+        }
+
+        public List<List<string>> AdquirientesNoAcreditados(List<List<string>> Adquirientes)
+        {
+            List<string> datosAVerificar = new List<string> { "YES", "NO" };
+            string cero = "0.00";
+
+            foreach (List<string> adquiriente in Adquirientes) 
+            {
+                if ( adquiriente[2] == datosAVerificar[0])
+                {
+                    adquiriente[1] = cero;
+                }
+            }
+            return Adquirientes;
+        }
+
+        public void RepartirAAdquirientesVacios(Enajenacion enajenacion)
+        {
+            int cantidadDeVacios = 0;
+            string cero = "0.00";
+            float porcentajeTotal = 0;
+
+            int anoActual = enajenacion.FechaInscripcion.Year;
+            var adquirientes = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                    .ToList();
+            foreach (var adquiriente in adquirientes)
+            {
+                if (adquiriente.PorcentajeDerechoPropietario == cero)
+                {
+                    cantidadDeVacios++;
+                }
+                porcentajeTotal = porcentajeTotal + float.Parse(adquiriente.PorcentajeDerechoPropietario);
+            }
+            if (cantidadDeVacios > 0)
+            {
+                foreach (var adquiriente in adquirientes)
+                {
+                    if (adquiriente.PorcentajeDerechoPropietario == cero)
+                    {
+                        adquiriente.PorcentajeDerechoPropietario = ((100 - porcentajeTotal) / (float)cantidadDeVacios).ToString("F2");
+                    }
+                }
+                db.SaveChanges();
+            }
+
+        }
+
+        public void BorrarAdquirientesVacios(Enajenacion enajenacion)
+        {
+            string cero = "0.00";
+            int anoActual = enajenacion.FechaInscripcion.Year;
+
+            var adquirientes = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                    .ToList();
+            foreach (var adquiriente in adquirientes)
+            {
+                if (adquiriente.PorcentajeDerechoPropietario == cero)
+                {
+                    db.Multipropietario.Remove(adquiriente);
+                }
+            }
+        }
+
+        public void VaciarPorcentajeEnajenante(List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+            string cero = "0.00";
+            foreach (List<string> enajenante in enajenantes)
+            {
+                int anoActual = enajenacion.FechaInscripcion.Year;
+                string rut = enajenante[0];
+
+                var adquirientes = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                    .Where(Data5 => Data5.RutPropietario == rut)
+                    .ToList();
+
+                if (adquirientes.Count > 0)
+                {
+                    adquirientes[0].PorcentajeDerechoPropietario = cero;
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        public List<List<string>> CambiarVigenciaAdquiriente(Enajenacion enajenacion)
+        {
+            int anoMinimo = 2019;
+            int anoActual = enajenacion.FechaInscripcion.Year;
+
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+            List<List<string>> adquirientesATransferir = new List<List<string>>();
+
+            var adquirientesACambiarVigencia = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null && Data4.AnoVigenciaInicial < anoActual)
+                    .ToList();
+
+            if (adquirientesACambiarVigencia.Count > 0)
+            {
+                foreach (var adquiriente in adquirientesACambiarVigencia)
+                {
+                    if ((int)adquiriente.AnoVigenciaInicial <= anoMinimo)
+                    {
+                        adquiriente.AnoVigenciaFinal = anoMinimo;
+                    }
+                    else { adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1; }
+                    db.SaveChanges();
+
+                    adquirientesATransferir.Add(new List<string>()
+                    {
+                        adquiriente.RutPropietario,
+                        adquiriente.PorcentajeDerechoPropietario,
+                        stringsAVerificar[1]
+                    });
+                }
+            }
+            return adquirientesATransferir;
+        }
+
+        public void CrearMultipropietario(List<List<string>> listaAdquirientes, Enajenacion enajenacion, List<List<string>> noTransferir)
+        {
+            int anoActual = enajenacion.FechaInscripcion.Year;
+            List<List<string>> adquirientesAAgregar = CambiarVigenciaAdquiriente(enajenacion);
+
+            if (adquirientesAAgregar != null)
+            {
+                foreach (List<string> adquiriente in adquirientesAAgregar.ToList())
+                {
+                    foreach (List<string> adquirienteNuevo in listaAdquirientes)
+                    {
+                        if (adquirienteNuevo[0] == adquiriente[0])
+                        {
+                            adquirientesAAgregar.Remove(adquiriente);
+                        }
+                    }
+                    foreach (List<string> adquirienteNoTransferir in noTransferir)
+                    {
+                        if (adquirienteNoTransferir[0] == adquiriente[0])
+                        {
+                            adquirientesAAgregar.Remove(adquiriente);
+                        }
+                    }
+                }
+                
+                listaAdquirientes.AddRange(adquirientesAAgregar);
+            }
+            
+            int anoMinimo = 2019;
+            foreach (List<string> adquiriente in listaAdquirientes)
+            {
+                Multipropietario multipropietario = new Multipropietario();
+                multipropietario.Comuna = enajenacion.Comuna;
+                multipropietario.Manzana = enajenacion.Manzana;
+                multipropietario.RolPredial = enajenacion.RolPredial;
+                multipropietario.RutPropietario = adquiriente[0];
+                multipropietario.PorcentajeDerechoPropietario = adquiriente[1];
+                multipropietario.Foja = enajenacion.Foja;
+                multipropietario.NumeroInscripcion = enajenacion.NumeroInscripcion;
+                multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
+                DateTime Fecha = enajenacion.FechaInscripcion;
+                multipropietario.AnoInscripcion = Fecha.Year;
+                int fechaVigenciaFinal;
+                if ((int)Fecha.Year <= anoMinimo)
+                {
+                    multipropietario.AnoVigenciaInicial = anoMinimo;
+                    fechaVigenciaFinal = anoMinimo;
+                }
+                else
+                {
+                    multipropietario.AnoVigenciaInicial = Fecha.Year;
+                    fechaVigenciaFinal = Fecha.Year;
+                }
+
+                db.Multipropietario.Add(multipropietario);
+                db.SaveChanges();
+            }
+        }
+
+        public bool ReparticionPorSumaDeAdquirientes(List<List<string>> listaAdquirientesFormateada,
+            List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+
+            float porcentajeTotalAdquirientes = 0;
+            float porcentajeTotalEnajenantes = 0;
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+            string cero = "0.00";
+
+            int anoActual = enajenacion.FechaInscripcion.Year;
+
+            var datosAnteriores = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                .ToList();
+
+            if (datosAnteriores.Count > 0)
+            {
+                foreach (List<string> enajenante in enajenantes)
+                {
+                    string rut = enajenante[0];
+
+                    var datosEnajenanteAnoAnterior = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .Where(Data5 => Data5.RutPropietario == rut)
+                    .ToList();
+
+                    if (datosEnajenanteAnoAnterior.Count > 0)
+                    {
+                        porcentajeTotalEnajenantes = porcentajeTotalEnajenantes + float.Parse(datosEnajenanteAnoAnterior[0].PorcentajeDerechoPropietario);
+                    }
+                }
+
+                foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                {
+                    porcentajeTotalAdquirientes = porcentajeTotalAdquirientes + float.Parse(adquiriente[1]);
+                }
+                if ((int)Math.Round(porcentajeTotalAdquirientes) > 100)
+                {
+                    return false;
+                }
+                else if ((int)Math.Round(porcentajeTotalAdquirientes) == 100)
+                {
+                    foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                    {
+                        adquiriente[1] = ((float)(float.Parse(adquiriente[1]) * porcentajeTotalEnajenantes) / 100).ToString("F2");
+                    }
+
+                    foreach (List<string> item in enajenantes)
+                    {
+                        item[1] = cero;
+                    }
+
+                    VaciarPorcentajeEnajenante(enajenantes, enajenacion);
+                    CrearMultipropietario(listaAdquirientesFormateada, enajenacion, enajenantes);
+                }
+                return true;
+            }
+            else
+            {
+                foreach (List<string> enajenante in enajenantes)
+                {
+                    var datosEnajenante = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                    .Where(Data5 => Data5.RutPropietario == enajenante[0])
+                    .ToList();
+
+                    if (datosEnajenante.Count > 0)
+                    {
+                        porcentajeTotalEnajenantes = porcentajeTotalEnajenantes + float.Parse(datosEnajenante[0].PorcentajeDerechoPropietario);
+
+                        foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                        {
+                            porcentajeTotalAdquirientes = porcentajeTotalAdquirientes + float.Parse(adquiriente[1]);
+                        }
+                        if ((int)Math.Round(porcentajeTotalAdquirientes) > 100)
+                        {
+                            return false;
+                        }
+                        else if ((int)Math.Round(porcentajeTotalAdquirientes) == 100)
+                        {
+                            foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                            {
+                                adquiriente[1] = ((float)(float.Parse(adquiriente[1]) * porcentajeTotalEnajenantes) / 100).ToString("F2");
+                            }
+                            VaciarPorcentajeEnajenante(enajenantes, enajenacion);
+                            CrearMultipropietario(listaAdquirientesFormateada, enajenacion, new List<List<string>>());
+                            return true;
+                        }
+                    }
+
+                }
+            }
+            return false;
+        }
+
+        public bool ReparticionPorDerechos(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+
+            if (adquirientes.Count > 1 || enajenantes.Count > 1)
+            {
+                return false;
+            }
+            else if (adquirientes.Count == 1 && enajenantes.Count == 1)
+            {
+                float porcentajeEnajenando = float.Parse(enajenantes[0][1]);
+                int anoActual = enajenacion.FechaInscripcion.Year;
+                string rut = enajenantes[0][0];
+
+                var multipropietarioAnoAnterior = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .Where(Data5 => Data5.RutPropietario == rut)
+                    .ToList();
+
+                if (multipropietarioAnoAnterior.Count > 0)
+                {
+                    float porcentajeEnajenante = float.Parse(multipropietarioAnoAnterior[0].PorcentajeDerechoPropietario);
+
+                    float porcentajeFinalEnajenante = porcentajeEnajenante - (porcentajeEnajenante * float.Parse(enajenantes[0][1])) / 100;
+                    float porcentajeFinalAdquiriente = (porcentajeEnajenante * float.Parse(adquirientes[0][1])) / 100;
+
+                    adquirientes[0][1] = porcentajeFinalAdquiriente.ToString("F2");
+                    adquirientes.Add(new List<string>() 
+                        {
+                        multipropietarioAnoAnterior[0].RutPropietario,
+                        porcentajeFinalEnajenante.ToString("F2"),
+                        stringsAVerificar[1]
+                    });
+
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
+
+                    return true;
+                }
+                else
+                {
+                    var multipropietarioAnoActual = db.Multipropietario
+                        .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                        .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                        .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                        .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                        .Where(Data5 => Data5.RutPropietario == rut)
+                        .ToList();
+
+                    if (multipropietarioAnoActual.Count > 0)
+                    {
+                        float porcentajeEnajenante = float.Parse(multipropietarioAnoActual[0].PorcentajeDerechoPropietario);
+
+                        float porcentajeFinalEnajenante = porcentajeEnajenante - (porcentajeEnajenante * float.Parse(enajenantes[0][1])) / 100;
+                        float porcentajeFinalAdquiriente = (porcentajeEnajenante * float.Parse(adquirientes[0][1])) / 100;
+
+                        multipropietarioAnoActual[0].PorcentajeDerechoPropietario = porcentajeFinalEnajenante.ToString("F2");
+                        adquirientes[0][1] = porcentajeFinalAdquiriente.ToString("F2");
+
+                        db.SaveChanges();
+                        CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
+
+                        return true;
+                    }
+                    else { return false; }
+                }
+            }
+            return false;
+        }
+
+        public bool ReparticionPorDominios(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+
+            foreach (List<string> enajenante in enajenantes)
+            {
+                int anoActual = enajenacion.FechaInscripcion.Year;
+                string rut = enajenante[0];
+
+                var datosEnajenanteAnoAnterior = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data4 => Data4.AnoVigenciaInicial == null)
+                .Where(Data5 => Data5.RutPropietario == rut)
+                .ToList();
+
+                if (datosEnajenanteAnoAnterior.Count > 0)
+                {
+                    float valorFinalPorcentaje = float.Parse(datosEnajenanteAnoAnterior[0].PorcentajeDerechoPropietario) - float.Parse(enajenante[1]);
+
+                    adquirientes.Add(new List<string>()
+                        {
+                        datosEnajenanteAnoAnterior[0].RutPropietario,
+                        valorFinalPorcentaje.ToString("F2"),
+                        stringsAVerificar[1]
+                        });
+
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
+                }
+                else
+                {
+                    var datosEnajenanteAnoActual = db.Multipropietario
+                        .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                        .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                        .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                        .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                        .Where(Data5 => Data5.RutPropietario == rut)
+                        .ToList();
+
+                    if (datosEnajenanteAnoActual.Count > 0)
+                    {
+                        float valorFinalPorcentaje = float.Parse(datosEnajenanteAnoActual[0].PorcentajeDerechoPropietario) - float.Parse(enajenante[1]);
+                        datosEnajenanteAnoActual[0].PorcentajeDerechoPropietario = valorFinalPorcentaje.ToString("F2");
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                    db.SaveChanges();
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
+                }
+            }   
+            return true;
+        }
+
+        public Enajenacion UnirFormulariosExistentes(Enajenacion enajenacion)
+        {
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+            List<List<string>> aCombinar = new List<List<string>>();
+
+            int anoActual = enajenacion.FechaInscripcion.Year;
+            var multipropietarios = db.Multipropietario
+            .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+            .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+            .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+            .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+            .ToList();
+
+            foreach (var multipropietario in multipropietarios)
+            {
+                string rut = multipropietario.RutPropietario;
+                var multipropietariosRepetidos = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                .Where(Data5 => Data5.RutPropietario == rut)
+                .ToList();
+
+                if (multipropietariosRepetidos.Count > 1)
+                {
+                    int numeroInscripcionMaximo = 0;
+                    float sumaPorcentajes = 0;
+
+                    foreach (var item in multipropietariosRepetidos)
+                    {
+                        sumaPorcentajes = sumaPorcentajes + float.Parse(item.PorcentajeDerechoPropietario);
+
+                        if (numeroInscripcionMaximo <= int.Parse(enajenacion.NumeroInscripcion))
+                        {
+                            numeroInscripcionMaximo = int.Parse(enajenacion.NumeroInscripcion);
+                        }
+                        db.Multipropietario.Remove(item);
+                    }
+                    List<string> aAgregar = new List<string>() { 
+                            rut,
+                            sumaPorcentajes.ToString("F2"),
+                            stringsAVerificar[0] 
+                    };
+
+                    db.SaveChanges();
+                    aCombinar.Add(aAgregar);
+                    enajenacion.NumeroInscripcion = numeroInscripcionMaximo.ToString();
+                }
+            }
+            CrearMultipropietario(aCombinar, enajenacion, new List<List<string>>());
+            return enajenacion;
+        }
+
+        public void TransformarPorcentajeNegativo(Enajenacion enajenacion)
+        {
+            string cero = "0.00";
+            int anoActual = enajenacion.FechaInscripcion.Year;
+
+            var multipropietarios = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+                .ToList();
+
+            if (multipropietarios.Count > 0)
+            {
+                foreach (var multipropietario in multipropietarios)
+                {
+                    float porcentajeMultipropietario = float.Parse(multipropietario.PorcentajeDerechoPropietario);
+                    if (porcentajeMultipropietario < 0)
+                    {
+                        multipropietario.PorcentajeDerechoPropietario = cero;
+                    }
+                }
+
+                db.SaveChanges();
+            }
+        }
+
+        public void AjustarPorcentajeFinal(Enajenacion enajenacion)
+        {
+            int anoActual = enajenacion.FechaInscripcion.Year;
+            
+            var totalAdquirientesAProcesar = db.Multipropietario
+               .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+               .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+               .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+               .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
+               .ToList();
+
+            float porcentajeTotal = 0;
+            foreach (var adquiriente in totalAdquirientesAProcesar)
+            {
+                porcentajeTotal = porcentajeTotal + float.Parse(adquiriente.PorcentajeDerechoPropietario);
+            }
+            
+            if ((int)Math.Round(porcentajeTotal) > 100)
+            {
+                float ponderacion = 100 / porcentajeTotal;
+                foreach (var adquiriente in totalAdquirientesAProcesar)
+                {
+                    adquiriente.PorcentajeDerechoPropietario = (
+                        (float.Parse(adquiriente.PorcentajeDerechoPropietario) * ponderacion).ToString("F2"));
+                }
+                db.SaveChanges();
+                BorrarAdquirientesVacios(enajenacion);
+            }
+            else if ((int)Math.Round(porcentajeTotal) < 100)
+            {
+                RepartirAAdquirientesVacios(enajenacion);
+            }
+            else if ((int)Math.Round(porcentajeTotal) == 100)
+            {
+                BorrarAdquirientesVacios(enajenacion);
+            }
+        }
 
         // GET: Enajenacions
         public ActionResult Index()
@@ -57,10 +613,6 @@ namespace UAndes.ICC5103._202301.Controllers
             return View();
         }
 
-
-
-
-
         // POST: Enajenacions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -74,11 +626,14 @@ namespace UAndes.ICC5103._202301.Controllers
 
             ViewBag.comunas = comunas;
 
-
             //  En el caso para la lista de Enajenantes y Adquirientes se debe agregar el valor "NO", esto ocurre cuando
             //  en el checklist no se agrega el valor "YES", por lo cual se verifica si se agrega o no.
             string keyEnajenate = "inputEnajentes[]";
             string keyAdquiriente = "inputAdquirientes[]";
+
+            //Se le asigna un numero a estas variables para poder llamarlas descriptivamente
+            string compraVenta = "1";
+            string regularizacionDePatrimonio = "2";
 
             List<string> listaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
             List<string> listaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
@@ -86,15 +641,19 @@ namespace UAndes.ICC5103._202301.Controllers
             double valorComparacion1;
             double valorComparacion2;
 
+            int anoMinimo = 2019;
+
+            List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+
             for (int i = 0; i < listaDeEnajenates.Count; i++)
             {
                 valorComparacion1 = (i + 1) % 3;
 
                 if ((int)valorComparacion1 == 0 && i != 0)
                 {
-                    if (listaDeEnajenates[i] != "YES" && listaDeEnajenates[i] != "NO")
+                    if (listaDeEnajenates[i] != stringsAVerificar[0] && listaDeEnajenates[i] != stringsAVerificar[1])
                     {
-                        listaDeEnajenates.Insert(i, "NO");
+                        listaDeEnajenates.Insert(i, stringsAVerificar[1]);
                     }
                 }
             }
@@ -104,23 +663,21 @@ namespace UAndes.ICC5103._202301.Controllers
                 valorComparacion2 = (i + 1) % 3;
                 if ((int)valorComparacion2 == 0 && i != 0)
                 {
-                    if (listaDeAdquirientes[i] != "YES" && listaDeAdquirientes[i] != "NO")
+                    if (listaDeAdquirientes[i] != stringsAVerificar[0] && listaDeAdquirientes[i] != stringsAVerificar[1])
                     {
-                        listaDeAdquirientes.Insert(i, "NO");
+                        listaDeAdquirientes.Insert(i, stringsAVerificar[1]);
                     }
                 }
             }
 
             if ((listaDeEnajenates.Count % 3) != 0)
             {
-                listaDeEnajenates.Insert(listaDeEnajenates.Count, "NO");
+                listaDeEnajenates.Insert(listaDeEnajenates.Count, stringsAVerificar[1]);
             }
             if ((listaDeAdquirientes.Count % 3) != 0)
             {
-                listaDeAdquirientes.Insert(listaDeAdquirientes.Count, "NO");
+                listaDeAdquirientes.Insert(listaDeAdquirientes.Count, stringsAVerificar[1]);
             }
-
-
 
             List<List<string>> listaEnajenantesFormateada = new List<List<string>>();
             List<List<string>> listaAdquirientesFormateada = new List<List<string>>();
@@ -128,7 +685,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
             foreach (string value in listaDeEnajenates)
             {
-                if (value == "NO" || value == "YES")
+                if (value == stringsAVerificar[1] || value == stringsAVerificar[0])
                 {
                     listaTemporal.Add(value);
                     listaEnajenantesFormateada.Add(listaTemporal.ToList());
@@ -138,14 +695,12 @@ namespace UAndes.ICC5103._202301.Controllers
                 {
                     listaTemporal.Add(value);
                 }
-
-
             }
 
             listaTemporal.Clear();
             foreach (string value in listaDeAdquirientes)
             {
-                if (value == "NO" || value == "YES")
+                if (value == stringsAVerificar[1] || value == stringsAVerificar[0])
                 {
                     listaTemporal.Add(value);
                     listaAdquirientesFormateada.Add(listaTemporal.ToList());
@@ -159,16 +714,30 @@ namespace UAndes.ICC5103._202301.Controllers
 
             }
 
+            if (enajenacion.CNE == compraVenta)
+            {
+                List<List<string>> adquirientesAProcesar = AdquirientesNoAcreditados(listaAdquirientesFormateada);
+
+                if (ReparticionPorSumaDeAdquirientes(adquirientesAProcesar, listaEnajenantesFormateada, enajenacion)) ;
+                else if (ReparticionPorDerechos(adquirientesAProcesar, listaEnajenantesFormateada, enajenacion)) ;
+                else if (ReparticionPorDominios(adquirientesAProcesar, listaEnajenantesFormateada, enajenacion)) ;
+
+                enajenacion = UnirFormulariosExistentes(enajenacion);
+                TransformarPorcentajeNegativo(enajenacion);
+                AjustarPorcentajeFinal(enajenacion);
+
+            }
             //Validacion de porcentajes para adquirientes en caso que CNE sea "Regularización de Patrimonio" o "Herencia".
-            if (enajenacion.CNE == "2")
+            else if (enajenacion.CNE == regularizacionDePatrimonio)
             {
                 int porcentajeTotal = 0;
+
                 List<List<string>> adquirientesNoAcredidatos = new List<List<string>>();
                 List<List<string>> adquirientesAcredidatos = new List<List<string>>();
 
                 foreach (List<string> dataAdquriente in listaAdquirientesFormateada)
                 {
-                    if (dataAdquriente[2] == "YES")
+                    if (dataAdquriente[2] == stringsAVerificar[0])
                     {
                         adquirientesNoAcredidatos.Add(dataAdquriente);
                         continue;
@@ -212,19 +781,24 @@ namespace UAndes.ICC5103._202301.Controllers
                 adquirientesAcredidatos.AddRange(adquirientesNoAcredidatos);
                 listaAdquirientesFormateada = adquirientesAcredidatos.ToList();
 
+                int anoActual = enajenacion.FechaInscripcion.Year;
+
                 var adquirientesARemplazar = db.Multipropietario
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
                     .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
-                    .Where(Data4 => Data4.AnoVigenciaInicial == enajenacion.FechaInscripcion.Year)
+                    .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
                     .ToList();
 
                 if (adquirientesARemplazar.Count > 0)
                 {
                     foreach (var adquiriente in adquirientesARemplazar)
                     {
-                        db.Multipropietario.Remove(adquiriente);
-                        db.SaveChanges();
+                        if ( int.Parse(adquiriente.NumeroInscripcion) <= int.Parse(enajenacion.NumeroInscripcion))
+                        {
+                            db.Multipropietario.Remove(adquiriente);
+                            db.SaveChanges();
+                        }
                     }
                 }
 
@@ -232,50 +806,38 @@ namespace UAndes.ICC5103._202301.Controllers
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
                     .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
-                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null && Data4.AnoVigenciaInicial < anoActual)
                     .ToList();
 
                 if (adquirientesACambiarVigencia.Count > 0)
                 {
                     foreach (var adquiriente in adquirientesACambiarVigencia)
                     {
-                        adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1;
+                        if ((int)adquiriente.AnoVigenciaInicial <= anoMinimo)
+                        {
+                            adquiriente.AnoVigenciaFinal = anoMinimo;
+                        }
+                        else { adquiriente.AnoVigenciaFinal = (int)enajenacion.FechaInscripcion.Year - 1; }
                         db.SaveChanges();
                     }
                 }
-   
+                
+                var adquirientesConFechaMenor = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null && Data4.AnoVigenciaInicial < anoActual)
+                    .ToList();
+
                 //Creacion de objeto Multipropetiario
-                foreach (List<string> adquiriente in listaAdquirientesFormateada)
-                {
-                    Multipropietario multipropietario = new Multipropietario();
-                    multipropietario.Comuna = enajenacion.Comuna;
-                    multipropietario.Manzana = enajenacion.Manzana;
-                    multipropietario.RolPredial = enajenacion.RolPredial;
-                    multipropietario.RutPropietario = adquiriente[0];
-                    multipropietario.PorcentajeDerechoPropietario = adquiriente[1];
-                    multipropietario.Foja = enajenacion.Foja;
-                    multipropietario.NumeroInscripcion = enajenacion.NumeroInscripcion;
-                    multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
-                    DateTime Fecha = enajenacion.FechaInscripcion;
-                    multipropietario.AnoInscripcion = Fecha.Year;
-                    if ((int)Fecha.Year <= 2019)
-                    {
-                        multipropietario.AnoVigenciaInicial = 2019;
-                    }
-                    else { multipropietario.AnoVigenciaInicial = Fecha.Year; }
-
-                    db.Multipropietario.Add(multipropietario);
-                    db.SaveChanges();
-                }
-
+                CrearMultipropietario(listaAdquirientesFormateada, enajenacion, new List<List<string>>());
             }
+
             var jsonEnajente = JsonConvert.SerializeObject(listaEnajenantesFormateada);
             var jsonAdquiriente = JsonConvert.SerializeObject(listaAdquirientesFormateada);
 
-            
             enajenacion.Enajenantes = jsonEnajente;
             enajenacion.Adquirientes = jsonAdquiriente;
-
 
             if (ModelState.IsValid)
             {
@@ -342,7 +904,6 @@ namespace UAndes.ICC5103._202301.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

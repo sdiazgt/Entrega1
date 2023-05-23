@@ -37,7 +37,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Comuna, "Comuna", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownListFor(model => model.Comuna, new SelectList(ViewBag.comunas), "Seleccione una Comuna", new { @class = "form-control" })
+            @Html.DropDownListFor(model => model.Comuna, new SelectList(ViewBag.comunas), "Seleccione una Comuna", new { @class = "form-control", @required = "required" })
             @Html.ValidationMessageFor(model => model.Comuna, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -166,12 +166,16 @@
         const removeButtonAdquirientes = document.getElementById("remove-box-adquirientes");
 
 
-        // Add event listeners
+        // creacion de Event Listeners
         addButtonEnajentes.addEventListener("click", AddInputBoxEnajente);
         removeButtonEnajentes.addEventListener("click", RemoveInputBoxEnajente);
 
         addButtonAdquirientes.addEventListener("click", AddInputBoxAdquirientes);
         removeButtonAdquirientes.addEventListener("click", RemoveInputBoxAdquirientes);
+
+        window.onload = function () {
+            PerformDropdownAction();
+        }
 
         
         const PerformDropdownAction = function () {
@@ -188,7 +192,7 @@
 
         document.getElementById('Comunas-Dropdown').addEventListener('change', PerformDropdownAction);
 
-        // Function to add an input box
+        // Funcion para añadir input boxes
         function AddInputBoxEnajente() {
             const NewInputBoxRut = document.createElement("input");
             NewInputBoxRut.type = "text";
