@@ -165,7 +165,7 @@ namespace UAndes.ICC5103._202301.Controllers
             return adquirientesATransferir;
         }
 
-        public void CrearMultipropietario(List<List<string>> listaAdquirientes, Enajenacion enajenacion)
+        public void CrearMultipropietario(List<List<string>> listaAdquirientes, Enajenacion enajenacion, List<List<string>> noTransferir)
         {
             int anoActual = enajenacion.FechaInscripcion.Year;
             List<List<string>> adquirientesAAgregar = CambiarVigenciaAdquiriente(enajenacion);
@@ -181,7 +181,15 @@ namespace UAndes.ICC5103._202301.Controllers
                             adquirientesAAgregar.Remove(adquiriente);
                         }
                     }
+                    foreach (List<string> adquirienteNoTransferir in noTransferir)
+                    {
+                        if (adquirienteNoTransferir[0] == adquiriente[0])
+                        {
+                            adquirientesAAgregar.Remove(adquiriente);
+                        }
+                    }
                 }
+                
                 listaAdquirientes.AddRange(adquirientesAAgregar);
             }
             
@@ -228,6 +236,8 @@ namespace UAndes.ICC5103._202301.Controllers
             {
                 int anoActual = enajenacion.FechaInscripcion.Year;
                 string rut = enajenante[0];
+                List<string> stringsAVerificar = new List<string> { "YES", "NO" };
+                string cero = "0.00";
 
                 var datosEnajenanteAnoAnterior = db.Multipropietario
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
@@ -240,6 +250,30 @@ namespace UAndes.ICC5103._202301.Controllers
                 if (datosEnajenanteAnoAnterior.Count > 0)
                 {
                     porcentajeTotalEnajenantes = porcentajeTotalEnajenantes + float.Parse(datosEnajenanteAnoAnterior[0].PorcentajeDerechoPropietario);
+
+                    foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                    {
+                        porcentajeTotalAdquirientes = porcentajeTotalAdquirientes + float.Parse(adquiriente[1]);
+                    }
+                    if ((int)Math.Round(porcentajeTotalAdquirientes) > 100)
+                    {
+                        return false;
+                    }
+                    else if ((int)Math.Round(porcentajeTotalAdquirientes) == 100)
+                    {
+                        foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                        {
+                            adquiriente[1] = ((float)(float.Parse(adquiriente[1]) * porcentajeTotalEnajenantes) / 100).ToString("F2");
+                        }
+                        
+                        foreach (List<string> item in enajenantes)
+                        {
+                            item[1] = cero;
+                        }
+
+                        VaciarPorcentajeEnajenante(enajenantes, enajenacion);
+                        CrearMultipropietario(listaAdquirientesFormateada, enajenacion, enajenantes);
+                    }
                 }
                 else
                 {
@@ -253,30 +287,30 @@ namespace UAndes.ICC5103._202301.Controllers
                     if (datosEnajenante.Count > 0)
                     {
                         porcentajeTotalEnajenantes = porcentajeTotalEnajenantes + float.Parse(datosEnajenante[0].PorcentajeDerechoPropietario);
+
+                        foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                        {
+                            porcentajeTotalAdquirientes = porcentajeTotalAdquirientes + float.Parse(adquiriente[1]);
+                        }
+                        if ((int)Math.Round(porcentajeTotalAdquirientes) > 100)
+                        {
+                            return false;
+                        }
+                        else if ((int)Math.Round(porcentajeTotalAdquirientes) == 100)
+                        {
+                            foreach (List<string> adquiriente in listaAdquirientesFormateada)
+                            {
+                                adquiriente[1] = ((float)(float.Parse(adquiriente[1]) * porcentajeTotalEnajenantes) / 100).ToString("F2");
+                            }
+                            VaciarPorcentajeEnajenante(enajenantes, enajenacion);
+                            CrearMultipropietario(listaAdquirientesFormateada, enajenacion, new List<List<string>>());
+                            return true;
+                        }
                     }
                 }
-            }
-
-            foreach (List<string> adquiriente in listaAdquirientesFormateada)
-            {
-                porcentajeTotalAdquirientes = porcentajeTotalAdquirientes + float.Parse(adquiriente[1]);
-            }
-            if ((int)Math.Round(porcentajeTotalAdquirientes) > 100)
-            {
                 return false;
-            }
-            else if ((int)Math.Round(porcentajeTotalAdquirientes) == 100)
-            {
-                foreach (List<string> adquiriente in listaAdquirientesFormateada)
-                {
-                    adquiriente[1] = ((float)(float.Parse(adquiriente[1]) * porcentajeTotalEnajenantes) / 100).ToString("F2");  
-                }
-                VaciarPorcentajeEnajenante(enajenantes, enajenacion);
-                CrearMultipropietario(listaAdquirientesFormateada, enajenacion);
-                return true;
-            }           
-            
-            return false;
+            }            
+            return true;
         }
 
         public bool ReparticionPorDerechos(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
@@ -316,7 +350,7 @@ namespace UAndes.ICC5103._202301.Controllers
                         stringsAVerificar[1]
                     });
 
-                    CrearMultipropietario(adquirientes, enajenacion);
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
 
                     return true;
                 }
@@ -341,7 +375,7 @@ namespace UAndes.ICC5103._202301.Controllers
                         adquirientes[0][1] = porcentajeFinalAdquiriente.ToString("F2");
 
                         db.SaveChanges();
-                        CrearMultipropietario(adquirientes, enajenacion);
+                        CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
 
                         return true;
                     }
@@ -379,7 +413,7 @@ namespace UAndes.ICC5103._202301.Controllers
                         stringsAVerificar[1]
                         });
 
-                    CrearMultipropietario(adquirientes, enajenacion);
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
                 }
                 else
                 {
@@ -403,7 +437,7 @@ namespace UAndes.ICC5103._202301.Controllers
                     }
 
                     db.SaveChanges();
-                    CrearMultipropietario(adquirientes, enajenacion);
+                    CrearMultipropietario(adquirientes, enajenacion, new List<List<string>>());
                 }
             }   
             return true;
@@ -459,7 +493,7 @@ namespace UAndes.ICC5103._202301.Controllers
                     enajenacion.NumeroInscripcion = numeroInscripcionMaximo.ToString();
                 }
             }
-            CrearMultipropietario(aCombinar, enajenacion);
+            CrearMultipropietario(aCombinar, enajenacion, new List<List<string>>());
             return enajenacion;
         }
 
@@ -791,7 +825,7 @@ namespace UAndes.ICC5103._202301.Controllers
                     .ToList();
 
                 //Creacion de objeto Multipropetiario
-                CrearMultipropietario(listaAdquirientesFormateada, enajenacion);
+                CrearMultipropietario(listaAdquirientesFormateada, enajenacion, new List<List<string>>());
             }
 
             var jsonEnajente = JsonConvert.SerializeObject(listaEnajenantesFormateada);
