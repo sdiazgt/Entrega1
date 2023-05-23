@@ -53,7 +53,7 @@ namespace UAndes.ICC5103._202301.Controllers
                                             (item.Comuna == comuna || string.IsNullOrEmpty(comuna)) &&
                                             (item.Manzana == manzana.ToString() || string.IsNullOrEmpty(manzana)) &&
                                             (item.RolPredial == predio.ToString() || string.IsNullOrEmpty(predio)) &&
-                                            (item.AnoVigenciaFinal == anoProcesado)
+                                            (item.AnoVigenciaFinal == anoProcesado || string.IsNullOrEmpty(ano))
                                             ).ToList();
 
             if (multipropietariosBusqueda.Count > 0)
