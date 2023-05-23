@@ -219,8 +219,6 @@ namespace UAndes.ICC5103._202301.Controllers
                     fechaVigenciaFinal = Fecha.Year;
                 }
 
-                
-
                 db.Multipropietario.Add(multipropietario);
                 db.SaveChanges();
             }
@@ -425,7 +423,6 @@ namespace UAndes.ICC5103._202301.Controllers
                         .Where(Data5 => Data5.RutPropietario == rut)
                         .ToList();
 
-
                     if (datosEnajenanteAnoActual.Count > 0)
                     {
                         float valorFinalPorcentaje = float.Parse(datosEnajenanteAnoActual[0].PorcentajeDerechoPropietario) - float.Parse(enajenante[1]);
@@ -599,10 +596,6 @@ namespace UAndes.ICC5103._202301.Controllers
             return View();
         }
 
-        
-
-        
-
         // POST: Enajenacions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -669,8 +662,6 @@ namespace UAndes.ICC5103._202301.Controllers
                 listaDeAdquirientes.Insert(listaDeAdquirientes.Count, stringsAVerificar[1]);
             }
 
-
-
             List<List<string>> listaEnajenantesFormateada = new List<List<string>>();
             List<List<string>> listaAdquirientesFormateada = new List<List<string>>();
             List<string> listaTemporal = new List<string>();
@@ -687,8 +678,6 @@ namespace UAndes.ICC5103._202301.Controllers
                 {
                     listaTemporal.Add(value);
                 }
-
-
             }
 
             listaTemporal.Clear();
@@ -796,7 +785,6 @@ namespace UAndes.ICC5103._202301.Controllers
                     }
                 }
 
-
                 var adquirientesACambiarVigencia = db.Multipropietario
                     .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
                     .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
@@ -899,7 +887,6 @@ namespace UAndes.ICC5103._202301.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
