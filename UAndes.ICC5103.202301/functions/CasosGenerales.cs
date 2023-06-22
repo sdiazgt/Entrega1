@@ -8,8 +8,8 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosGenerales
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-        private FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
 
         private void RepartirAAdquirientesVacios(Enajenacion enajenacion)
         {

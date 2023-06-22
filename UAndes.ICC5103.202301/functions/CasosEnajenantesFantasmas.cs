@@ -8,8 +8,8 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosEnajenantesFantasmas
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-        private FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
 
         private List<Multipropietario> ObtenerEnajenantesNoFantasmas(List<List<string>> enajenantes, Enajenacion enajenacion)
         {
@@ -137,8 +137,7 @@ namespace UAndes.ICC5103._202301.functions
             return false;
         }
 
-        private void CasoDefaultFantasma(List<Multipropietario> multipropietarios, List<List<string>> adquirientes,
-            List<List<string>> enajenantes, Enajenacion enajenacion)
+        private void CasoDefaultFantasma(List<Multipropietario> multipropietarios, List<List<string>> enajenantes, Enajenacion enajenacion)
         {
             List<Multipropietario> multipropietariosProcesado = new List<Multipropietario>();
             bool anadir = false;
@@ -201,7 +200,7 @@ namespace UAndes.ICC5103._202301.functions
                 }
                 else
                 {
-                    CasoDefaultFantasma(multipropietarios, adquirientes, enajenantes, enajenacion);
+                    CasoDefaultFantasma(multipropietarios, enajenantes, enajenacion);
                     return true;
                 }
             }

@@ -19,13 +19,13 @@ namespace UAndes.ICC5103._202301.Controllers
 {
     public class EnajenacionsController : Controller
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
-        private FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
-        private CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
-        private CasosEnajenantes CasosNoFantasma= new CasosEnajenantes();
-        private CasosGenerales CasosGenerales = new CasosGenerales();
-        private FuncionesFormulario formulario = new FuncionesFormulario();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
+        private readonly CasosEnajenantes CasosNoFantasma= new CasosEnajenantes();
+        private readonly CasosGenerales CasosGenerales = new CasosGenerales();
+        private readonly FuncionesFormulario formulario = new FuncionesFormulario();
 
         private bool ProcesarCNE(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
         {

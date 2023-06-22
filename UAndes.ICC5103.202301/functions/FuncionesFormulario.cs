@@ -8,7 +8,7 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class FuncionesFormulario
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
         public (List<List<string>>, List<List<string>>) FormatearAdquirientesYEnajenantes(List<string> adquirientes, List<string> enajenantes)
         {

@@ -9,7 +9,7 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class FuncionesMultipropietario
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
         public void CrearMultipropietarios(List<Multipropietario> multipropietarios)
         {
@@ -26,20 +26,24 @@ namespace UAndes.ICC5103._202301.functions
         {
             List<string> stringsAVerificar = new List<string> { "YES", "NO" };
             string cero = "0.00";
-            List<Multipropietario> multipropietarios = new List<Multipropietario>();
-
             int anoMinimo = 2019;
+
+            List<Multipropietario> multipropietarios = new List<Multipropietario>();
+            
             foreach (List<string> adquiriente in adquirientes)
             {
-                Multipropietario multipropietario = new Multipropietario();
-                multipropietario.Comuna = enajenacion.Comuna;
-                multipropietario.Manzana = enajenacion.Manzana;
-                multipropietario.RolPredial = enajenacion.RolPredial;
-                multipropietario.RutPropietario = adquiriente[0];
-                multipropietario.PorcentajeDerechoPropietario = adquiriente[1];
-                multipropietario.Foja = enajenacion.Foja;
-                multipropietario.NumeroInscripcion = enajenacion.NumeroInscripcion;
-                multipropietario.FechaInscripcion = enajenacion.FechaInscripcion;
+                Multipropietario multipropietario = new Multipropietario
+                {
+                    Comuna = enajenacion.Comuna,
+                    Manzana = enajenacion.Manzana,
+                    RolPredial = enajenacion.RolPredial,
+                    RutPropietario = adquiriente[0],
+                    PorcentajeDerechoPropietario = adquiriente[1],
+                    Foja = enajenacion.Foja,
+                    NumeroInscripcion = enajenacion.NumeroInscripcion,
+                    FechaInscripcion = enajenacion.FechaInscripcion
+                };
+
                 DateTime Fecha = enajenacion.FechaInscripcion;
                 multipropietario.AnoInscripcion = Fecha.Year;
                 if ((int)Fecha.Year <= anoMinimo)
@@ -61,22 +65,25 @@ namespace UAndes.ICC5103._202301.functions
         public List<Multipropietario> CrearObjetoMultipropietarioVacio(List<List<string>> enajenantes, Enajenacion enajenacion)
         {
             string cero = "0.00";
+
             List<Multipropietario> multipropietarios = new List<Multipropietario>();
 
             foreach (List<string> enajenante in enajenantes)
             {
                 int anoActual = enajenacion.FechaInscripcion.Year;
-                Multipropietario multipropietario = new Multipropietario();
-                multipropietario.Comuna = enajenacion.Comuna;
-                multipropietario.Manzana = enajenacion.Manzana;
-                multipropietario.RolPredial = enajenacion.RolPredial;
-                multipropietario.RutPropietario = enajenante[0];
-                multipropietario.PorcentajeDerechoPropietario = cero;
-                multipropietario.Foja = null;
-                multipropietario.NumeroInscripcion = null;
-                multipropietario.FechaInscripcion = null;
-                multipropietario.AnoInscripcion = null;
-                multipropietario.AnoVigenciaInicial = anoActual;
+                Multipropietario multipropietario = new Multipropietario
+                {
+                    Comuna = enajenacion.Comuna,
+                    Manzana = enajenacion.Manzana,
+                    RolPredial = enajenacion.RolPredial,
+                    RutPropietario = enajenante[0],
+                    PorcentajeDerechoPropietario = cero,
+                    Foja = null,
+                    NumeroInscripcion = null,
+                    FechaInscripcion = null,
+                    AnoInscripcion = null,
+                    AnoVigenciaInicial = anoActual
+                };
 
                 multipropietarios.Add(multipropietario);
             }
@@ -96,19 +103,20 @@ namespace UAndes.ICC5103._202301.functions
                 DateTime FechaInscripcion = (DateTime)multipropietariosVigente.FechaInscripcion;
                 int ano = FechaInscripcion.Year;
 
-                Multipropietario multipropietario = new Multipropietario();
-                multipropietario.Comuna = enajenacion.Comuna;
-                multipropietario.Manzana = enajenacion.Manzana;
-                multipropietario.RolPredial = enajenacion.RolPredial;
-                multipropietario.RutPropietario = rut;
-                multipropietario.PorcentajeDerechoPropietario = porcentaje;
-                multipropietario.Foja = foja;
-                multipropietario.NumeroInscripcion = NumeroInscripcion;
-                multipropietario.FechaInscripcion = FechaInscripcion;
-                multipropietario.AnoInscripcion = ano;
+                Multipropietario multipropietario = new Multipropietario
+                {
+                    Comuna = enajenacion.Comuna,
+                    Manzana = enajenacion.Manzana,
+                    RolPredial = enajenacion.RolPredial,
+                    RutPropietario = rut,
+                    PorcentajeDerechoPropietario = porcentaje,
+                    Foja = foja,
+                    NumeroInscripcion = NumeroInscripcion,
+                    FechaInscripcion = FechaInscripcion,
+                    AnoInscripcion = ano
+                };
 
                 multipropietarios.Add(multipropietario);
-
             }
             return multipropietarios;
         }

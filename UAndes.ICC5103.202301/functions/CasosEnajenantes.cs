@@ -8,9 +8,9 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosEnajenantes
     {
-        private FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
-        private CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
-        private FuncionesFormulario formulario = new FuncionesFormulario();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
+        private readonly FuncionesFormulario formulario = new FuncionesFormulario();
 
         private bool CasoCienPorcientoAdquirientes(List<Multipropietario> multipropietarios, List<List<string>> adquirientes,
             List<List<string>> enajenantes, Enajenacion enajenacion)
@@ -111,8 +111,7 @@ namespace UAndes.ICC5103._202301.functions
             return false;
         }
 
-        private void CasoDominios(List<Multipropietario> multipropietarios, List<List<string>> adquirientes,
-            List<List<string>> enajenantes, Enajenacion enajenacion)
+        private void CasoDominios(List<Multipropietario> multipropietarios, List<List<string>> enajenantes, Enajenacion enajenacion)
         {
             //Codigo nuevo
             List<Multipropietario> multipropietariosProcesado = new List<Multipropietario>();
@@ -157,7 +156,7 @@ namespace UAndes.ICC5103._202301.functions
             {
                 if (CasoDerechos(multipropietarios, adquirientes, enajenantes, enajenacion) == false)
                 {
-                    CasoDominios(multipropietarios, adquirientes, enajenantes, enajenacion);
+                    CasoDominios(multipropietarios, enajenantes, enajenacion);
                 }
             }
         }
