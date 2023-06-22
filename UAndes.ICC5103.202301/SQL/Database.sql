@@ -37,12 +37,12 @@ CREATE TABLE [dbo].[Multipropietario](
 	[Comuna] [nvarchar](50) NOT NULL,
 	[Manzana] [nchar](50) NOT NULL,
 	[RolPredial] [nchar](50) NOT NULL,
-	[RutPropietario] [nvarchar](10) NOT NULL,
+	[RutPropietario] [nvarchar](15) NOT NULL,
 	[PorcentajeDerechoPropietario] [nchar](10) NULL,
-	[Foja] [nchar](50) NOT NULL,
-	[AnoInscripcion] [int] NOT NULL,
+	[Foja] [nchar](50) NULL,
+	[AnoInscripcion] [int] NULL,
 	[NumeroInscripcion] [nchar](50) NULL,
-	[FechaInscripcion] [date] NOT NULL,
+	[FechaInscripcion] [date] NULL,
 	[AnoVigenciaInicial] [int] NOT NULL,
 	[AnoVigenciaFinal] [int] NULL
  CONSTRAINT [PK_Multipropietario] PRIMARY KEY CLUSTERED(

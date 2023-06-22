@@ -28,12 +28,12 @@
           <Property Name="Comuna" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Manzana" Type="nchar" MaxLength="50" Nullable="false" />
           <Property Name="RolPredial" Type="nchar" MaxLength="50" Nullable="false" />
-          <Property Name="RutPropietario" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="RutPropietario" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="PorcentajeDerechoPropietario" Type="nchar" MaxLength="10" />
-          <Property Name="Foja" Type="nchar" MaxLength="50" Nullable="false" />
-          <Property Name="AnoInscripcion" Type="int" Nullable="false" />
+          <Property Name="Foja" Type="nchar" MaxLength="50" />
+          <Property Name="AnoInscripcion" Type="int" />
           <Property Name="NumeroInscripcion" Type="nchar" MaxLength="50" />
-          <Property Name="FechaInscripcion" Type="date" Nullable="false" />
+          <Property Name="FechaInscripcion" Type="date" />
           <Property Name="AnoVigenciaInicial" Type="int" Nullable="false" />
           <Property Name="AnoVigenciaFinal" Type="int" />
         </EntityType>
@@ -96,12 +96,12 @@
           <Property Name="Comuna" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Manzana" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
           <Property Name="RolPredial" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
-          <Property Name="RutPropietario" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="RutPropietario" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
           <Property Name="PorcentajeDerechoPropietario" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="Foja" Type="String" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
-          <Property Name="AnoInscripcion" Nullable="false" Type="Int32" />
+          <Property Name="Foja" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="AnoInscripcion" Type="Int32" />
           <Property Name="NumeroInscripcion" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
-          <Property Name="FechaInscripcion" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="FechaInscripcion" Type="DateTime" Precision="0" />
           <Property Name="AnoVigenciaInicial" Type="Int32" Nullable="false" />
           <Property Name="AnoVigenciaFinal" Type="Int32" />
         </EntityType>
