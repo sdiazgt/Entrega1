@@ -308,6 +308,11 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MultipropietariosController.cs" />
     <Compile Include="Controllers\PersonasController.cs" />
+    <Compile Include="functions\CasosEnajenantes.cs" />
+    <Compile Include="functions\CasosEnajenantesFantasmas.cs" />
+    <Compile Include="functions\CasosGenerales.cs" />
+    <Compile Include="functions\FuncionesFormulario.cs" />
+    <Compile Include="functions\FuncionesMultipropietario.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
