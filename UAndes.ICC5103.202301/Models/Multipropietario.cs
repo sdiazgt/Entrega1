@@ -21,9 +21,9 @@ namespace UAndes.ICC5103._202301.Models
         public string RutPropietario { get; set; }
         public string PorcentajeDerechoPropietario { get; set; }
         public string Foja { get; set; }
-        public int AnoInscripcion { get; set; }
+        public Nullable<int> AnoInscripcion { get; set; }
         public string NumeroInscripcion { get; set; }
-        public System.DateTime FechaInscripcion { get; set; }
+        public Nullable<System.DateTime> FechaInscripcion { get; set; }
         public int AnoVigenciaInicial { get; set; }
         public Nullable<int> AnoVigenciaFinal { get; set; }
     }
