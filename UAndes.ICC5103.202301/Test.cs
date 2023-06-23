@@ -5,6 +5,7 @@ using System.Web;
 using NUnit.Framework;
 using UAndes.ICC5103._202301.functions;
 using UAndes.ICC5103._202301.Models;
+using UAndes.ICC5103._202301.Controllers;
 
 namespace UAndes.ICC5103._202301
 {
@@ -19,8 +20,6 @@ namespace UAndes.ICC5103._202301
             List<List<string>> Enajenantes = new List<List<string>>();
             List<List<string>> Adquiriente = new List<List<string>>() { new List<string> { "125", "30", "NO" } };
             Enajenantes.Add(new List<string> { "2", "100", "NO" });
-            //Adquirientes.Add(new List<string> { "126", "30", "NO" });
-            //Adquirientes.Add(new List<string> { "127", "30", "NO" });
 
             Enajenacion enajenacion = new Enajenacion
             {
@@ -266,6 +265,31 @@ namespace UAndes.ICC5103._202301
             SiAcreditadosTest.Add(new List<string> { "1", "30", "NO" });
 
             Assert.AreEqual(funcionFormulario.ProcesarAdquirientesPorAcreditacion(SiAcreditadosTest, NoAcreditadosTest), SiAcreditadosTest);
+
+        }
+
+        [TestCase]
+        public void UnitTest9()
+        {
+            EnajenacionsController enajenacionsController = new EnajenacionsController();
+            List<List<string>> Enajenantes = new List<List<string>>();
+            List<List<string>> Adquiriente = new List<List<string>>() { new List<string> { "20286382-5", "30", "NO" } };
+            Enajenantes.Add(new List<string> { "20286382-3", "100", "NO" });
+
+            Enajenacion enajenacion = new Enajenacion
+            {
+                CNE = "1",
+                Comuna = "Santiago",
+                Manzana = "13",
+                RolPredial = "11",
+                Enajenantes = null,
+                Adquirientes = null,
+                Foja = "10",
+                FechaInscripcion = new DateTime(2022, 05, 09),
+                NumeroInscripcion = "1"
+            };
+
+            Assert.AreEqual(enajenacionsController.VerificarRut(Adquiriente, Enajenantes, enajenacion), true);
 
         }
     }

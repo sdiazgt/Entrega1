@@ -108,7 +108,7 @@ namespace UAndes.ICC5103._202301.Controllers
             return true;
         }
 
-        private bool VerificarRut(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
+        public bool VerificarRut(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
         {
             string regularizacionDePatrimonio = "2";
             int largoMaximo = 10;
