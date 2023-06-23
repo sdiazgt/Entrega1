@@ -90,7 +90,7 @@ namespace UAndes.ICC5103._202301.functions
             return multipropietarios;
         }
 
-        private List<Multipropietario> CrearObjetoMultipropetarioVigente(List<Multipropietario> multipropietariosVigentes, Enajenacion enajenacion)
+        public List<Multipropietario> CrearObjetoMultipropetarioVigente(List<Multipropietario> multipropietariosVigentes, Enajenacion enajenacion)
         {
             List<Multipropietario> multipropietarios = new List<Multipropietario>();
 
