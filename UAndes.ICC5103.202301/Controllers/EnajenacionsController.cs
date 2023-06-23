@@ -26,11 +26,132 @@ namespace UAndes.ICC5103._202301.Controllers
         private readonly CasosEnajenantes CasosNoFantasma= new CasosEnajenantes();
         private readonly CasosGenerales CasosGenerales = new CasosGenerales();
         private readonly FuncionesFormulario formulario = new FuncionesFormulario();
+        private readonly RecalcularFormulario recalcular = new RecalcularFormulario();
+
+        private bool VerificarNumeroInscripcionMenor(Enajenacion enajenacion, List<List<string>> adquirientes)
+        {
+            foreach (List<string> adquiriente in adquirientes)
+            {
+                string rut = adquiriente[0];
+                var multipropietarios = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                .Where(Data5 => Data5.RutPropietario == rut)
+                .ToList();
+
+                if (multipropietarios.Count > 0)
+                {
+                    foreach (Multipropietario multipropietario in multipropietarios)
+                    {
+                        string rutMultipropietario = multipropietario.RutPropietario;
+                        int inscripcion = int.Parse(multipropietario.NumeroInscripcion);
+                        int inscripcionFormulario = int.Parse(enajenacion.NumeroInscripcion);
+
+                        if (rut == rutMultipropietario && inscripcionFormulario < inscripcion)
+                        {
+                            ModelState.AddModelError("numeroInscripcion", "El numero de inscripcion no prevalece para el año ingresado");
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool VerificarNumeroInscripcion(Enajenacion enajenacion)
+        {
+            string numeroInscripcion = enajenacion.NumeroInscripcion;
+            if (numeroInscripcion.All(char.IsDigit) == false)
+            {
+                ModelState.AddModelError("numeroInscripcion", "El numero de inscripcion debe ser un numero");
+                return false;
+            }
+            return true;
+        }
+
+        private bool VerificarFormatoRut(string rut)
+        {
+            int posicionGuion = 2;
+            char guion = rut[rut.Length - posicionGuion];
+            char valorGuion = '-';
+
+            if (guion != valorGuion)
+            {
+                return false;
+            }
+            else
+            {
+                // Se cambian
+                int posicionK = 1;
+                char k = rut[rut.Length - posicionK];
+                char valorK = 'k';
+                char valorKMayuscula = 'K';
+                string rutSinK = rut;
+                if ( k == valorK)
+                {
+                    rutSinK = rut.Replace('k', '0');
+                }
+                else if (k == valorKMayuscula)
+                {
+                    rutSinK = rut.Replace('K', '0');
+                }
+
+                string rutSinGuion = rutSinK.Replace('-', '0');
+
+                if(rutSinGuion.All(char.IsDigit) == false)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool VerificarRut(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+            string regularizacionDePatrimonio = "2";
+            int largoMaximo = 10;
+            foreach (List<string> adquiriente in adquirientes)
+            {
+                if (adquiriente[0].Length < largoMaximo || adquiriente[0].Length > largoMaximo)
+                {
+                    ModelState.AddModelError("Adquirientes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    return false;
+                }
+                else if (VerificarFormatoRut(adquiriente[0]) == false)
+                {  
+                    ModelState.AddModelError("Adquirientes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    return false;
+                }
+            }
+            if (enajenacion.CNE != regularizacionDePatrimonio)
+            foreach (List<string> enajenante in enajenantes)
+            {
+                if (enajenante[0].Length < largoMaximo || enajenante[0].Length > largoMaximo)
+                {
+                    ModelState.AddModelError("enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    return false;
+                }
+                else if (VerificarFormatoRut(enajenante[0]) == false)
+                {
+                    ModelState.AddModelError("enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    return false;
+                }
+            }
+            return true;
+        }
 
         private bool ProcesarCNE(List<List<string>> adquirientes, List<List<string>> enajenantes, Enajenacion enajenacion)
         {
             string compraVenta = "1";
             string regularizacionDePatrimonio = "2";
+
+            if (VerificarRut(adquirientes, enajenantes, enajenacion) == false || VerificarNumeroInscripcion(enajenacion) == false ||
+                VerificarNumeroInscripcionMenor(enajenacion, adquirientes) == false)
+            {
+                return false;
+            }
 
             if (enajenacion.CNE == compraVenta)
             {
@@ -70,7 +191,6 @@ namespace UAndes.ICC5103._202301.Controllers
             return true;
         }
 
-        //Funciones relacionadas al manejo de paginas
         // GET: Enajenacions
         public ActionResult Index()
         {
@@ -119,22 +239,25 @@ namespace UAndes.ICC5103._202301.Controllers
             List<string> comunas = comuna.ListaDeComunas();
             ViewBag.comunas = comunas;
 
-            //  En el caso para la lista de Enajenantes y Adquirientes se debe agregar el valor "NO", esto ocurre cuando
-            //  en el checklist no se agrega el valor "YES", por lo cual se verifica si se agrega o no.
             string keyEnajenate = "inputEnajentes[]";
             string keyAdquiriente = "inputAdquirientes[]";
             List<string> listaDeEnajenates = Request.Form.GetValues(keyEnajenate)?.ToList();
             List<string> listaDeAdquirientes = Request.Form.GetValues(keyAdquiriente)?.ToList();
 
+            //  En el caso para la lista de Enajenantes y Adquirientes se debe agregar el valor "NO", esto ocurre cuando
+            //  en el checklist no se agrega el valor "YES", por lo cual se verifica si se agrega o no.
             var datosFormateados = formulario.FormatearAdquirientesYEnajenantes(listaDeAdquirientes, listaDeEnajenates);
             List<List<string>> listaAdquirientesFormateada = datosFormateados.Item1;
             List<List<string>> listaEnajenantesFormateada = datosFormateados.Item2;
 
-            if (ProcesarCNE(listaAdquirientesFormateada, listaEnajenantesFormateada, enajenacion) == false)
+            if (formulario.EsFormularioRepetido(enajenacion) == false && formulario.EsFormularioDeAnoAnterior(enajenacion) == false)
             {
-                return View(enajenacion);
-            }
+                if (ProcesarCNE(listaAdquirientesFormateada, listaEnajenantesFormateada, enajenacion) == false)
+                {
+                    return View(enajenacion);
+                }
 
+            }
             var jsonEnajente = JsonConvert.SerializeObject(listaEnajenantesFormateada);
             var jsonAdquiriente = JsonConvert.SerializeObject(listaAdquirientesFormateada);
 
@@ -145,6 +268,13 @@ namespace UAndes.ICC5103._202301.Controllers
             {
                 db.Enajenacion.Add(enajenacion);
                 db.SaveChanges();
+                if (formulario.EsFormularioRepetido(enajenacion) || formulario.EsFormularioDeAnoAnterior(enajenacion))
+                {
+                    string comunaFormulario = enajenacion.Comuna;
+                    string manzanaFormulario = enajenacion.Manzana;
+                    string predioFormulario = enajenacion.RolPredial;
+                    recalcular.RecalcularFormularios(comunaFormulario, manzanaFormulario, predioFormulario);
+                }
                 return RedirectToAction("Index");
             }
             return View(enajenacion);
@@ -202,8 +332,16 @@ namespace UAndes.ICC5103._202301.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Enajenacion enajenacion = db.Enajenacion.Find(id);
+
+            string comuna = enajenacion.Comuna;
+            string manzana = enajenacion.Manzana;
+            string predio = enajenacion.RolPredial;
+
             db.Enajenacion.Remove(enajenacion);
             db.SaveChanges();
+
+            recalcular.RecalcularFormularios(comuna, manzana, predio);
+
             return RedirectToAction("Index");
         }
         protected override void Dispose(bool disposing)

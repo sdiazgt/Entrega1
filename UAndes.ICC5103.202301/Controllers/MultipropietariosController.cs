@@ -12,16 +12,7 @@ namespace UAndes.ICC5103._202301.Controllers
 {
     public class MultipropietariosController : Controller
     {
-        private InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-
-        public bool EsNumero(string numero)
-        {
-            var esNumero = int.TryParse(numero, out int n);
-            return esNumero;
-        }
-
-        
-
+        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
         // GET: Multipropietarios
         public ActionResult Index(string comuna, string manzana, string predio, string ano)

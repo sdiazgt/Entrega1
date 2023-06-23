@@ -35,6 +35,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -311,6 +313,7 @@
     <Compile Include="functions\CasosEnajenantes.cs" />
     <Compile Include="functions\CasosEnajenantesFantasmas.cs" />
     <Compile Include="functions\CasosGenerales.cs" />
+    <Compile Include="functions\RecalcularFormulario.cs" />
     <Compile Include="functions\FuncionesFormulario.cs" />
     <Compile Include="functions\FuncionesMultipropietario.cs" />
     <Compile Include="Global.asax.cs">

@@ -146,10 +146,14 @@ namespace UAndes.ICC5103._202301.functions
         public bool VerificarRegistrosAnteriores(Enajenacion enajenacion)
         {
             int anoActual = enajenacion.FechaInscripcion.Year;
+            string comuna = enajenacion.Comuna;
+            string manzana = enajenacion.Manzana;
+            string predio = enajenacion.RolPredial;
+
             var adquirientePorAno = db.Multipropietario
-                .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
-                .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
-                .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                .Where(Data1 => Data1.Comuna == comuna)
+                .Where(Data2 => Data2.Manzana == manzana)
+                .Where(Data3 => Data3.RolPredial == predio)
                 .Where(Data4 => Data4.AnoVigenciaInicial == anoActual)
                 .ToList();
 
@@ -196,5 +200,61 @@ namespace UAndes.ICC5103._202301.functions
             }
             return true;
         }
+
+        public bool EsFormularioRepetido(Enajenacion formularioARevisar)
+        {
+            string inscripcion = formularioARevisar.NumeroInscripcion;
+            string comuna = formularioARevisar.Comuna;
+            string manzana = formularioARevisar.Manzana;
+            string predio = formularioARevisar.RolPredial;
+
+            var formularios = db.Enajenacion
+                .Where(Data1 => Data1.Comuna == comuna)
+                .Where(Data2 => Data2.Manzana == manzana)
+                .Where(Data3 => Data3.RolPredial == predio)
+                .Where(Data4 => Data4.NumeroInscripcion == inscripcion)
+                .ToList();
+
+            foreach (Enajenacion formulario in formularios)
+            {
+                string numeroInscripcionRevisar = formularioARevisar.NumeroInscripcion;
+                string numeroInscripcion = formulario.NumeroInscripcion;
+                if (numeroInscripcionRevisar == numeroInscripcion)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool EsFormularioDeAnoAnterior(Enajenacion formularioARevisar)
+        {
+            string inscripcion = formularioARevisar.NumeroInscripcion;
+            string comuna = formularioARevisar.Comuna;
+            string manzana = formularioARevisar.Manzana;
+            string predio = formularioARevisar.RolPredial;
+
+            var formularios = db.Multipropietario
+                .Where(Data1 => Data1.Comuna == comuna)
+                .Where(Data2 => Data2.Manzana == manzana)
+                .Where(Data3 => Data3.RolPredial == predio)
+                .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                .ToList();
+
+            if (formularios.Count > 0)
+            {
+                foreach (Multipropietario formulario in formularios)
+                {
+                    int anoRevisar = formularioARevisar.FechaInscripcion.Year;
+                    int anoVigente = (int)formulario.AnoInscripcion;
+                    if (anoRevisar < anoVigente)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }
