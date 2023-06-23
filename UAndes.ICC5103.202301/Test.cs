@@ -178,7 +178,7 @@ namespace UAndes.ICC5103._202301
             };
 
             Multipropietario multipropietarioTest = new Multipropietario
-            {
+            {           
                 Comuna = enajenacion.Comuna,
                 Manzana = enajenacion.Manzana,
                 RolPredial = enajenacion.RolPredial,
@@ -201,6 +201,72 @@ namespace UAndes.ICC5103._202301
             var actual = serializer.Serialize(funcionMultipropietario.CrearObjetoMultipropetarioVigente(Tester, enajenacion)[0]);
 
             Assert.AreEqual(actual, expected);
+        }
+
+        [TestCase]
+        public void UnitTest5()
+        {
+            FuncionesFormulario funcionFormulario = new FuncionesFormulario();
+            List<List<string>> expectedEnajenantes = new List<List<string>>();
+            expectedEnajenantes.Add(new List<string> { "383983", "30", "NO" });
+            expectedEnajenantes.Add(new List<string> { "839894", "70", "NO" });
+            List<List<string>> expectedAdquirientes = new List<List<string>>();
+            expectedAdquirientes.Add(new List<string> { "1", "30", "NO" });
+            expectedAdquirientes.Add(new List<string> { "2", "70", "NO" });
+
+            List<string> TestEnajenantes = new List<string>() { "383983", "30", "839894", "70"};
+            List<string> TestAdquirientes = new List<string>() { "1", "30", "2", "70" };
+
+            (List<List<string>>, List<List<string>>) TestData = funcionFormulario.FormatearAdquirientesYEnajenantes(TestAdquirientes, TestEnajenantes);
+            (List<List<string>>, List<List<string>>) CompareData = (expectedAdquirientes, expectedEnajenantes);
+
+            Assert.AreEqual(CompareData, TestData);
+
+        }
+        [TestCase]
+        public void UnitTest6()
+        {
+            FuncionesFormulario funcionFormulario = new FuncionesFormulario();
+            List<List<string>> NoAcreditadosTest = new List<List<string>>();
+            NoAcreditadosTest.Add(new List<string> { "383983", "30", "YES" });
+            List<List<string>> SiAcreditadosTest = new List<List<string>>();
+            SiAcreditadosTest.Add(new List<string> { "1", "30", "NO" });
+
+            (List<List<string>>, List<List<string>>) CompareData = (SiAcreditadosTest, NoAcreditadosTest);
+
+            List <List<string>> TestData = new List<List<string>>();
+            TestData.Add(new List<string> { "383983", "30", "YES" });
+            TestData.Add(new List<string> { "1", "30", "NO" });
+
+            (List<List<string>>, List<List<string>>) Data = funcionFormulario.ObtenerAdquirientesPorAcreditacion(TestData);
+
+            Assert.AreEqual(CompareData, Data);
+
+        }
+
+        [TestCase]
+        public void UnitTest7()
+        {
+            FuncionesFormulario funcionFormulario = new FuncionesFormulario();
+            List<List<string>> TestData = new List<List<string>>();
+            TestData.Add(new List<string> { "383983", "30", "YES" });
+            TestData.Add(new List<string> { "1", "30", "NO" });
+
+            Assert.AreEqual(funcionFormulario.VerificarDatosFormularioHerencia(TestData), true);
+
+        }
+
+        [TestCase]
+        public void UnitTest8()
+        {
+            FuncionesFormulario funcionFormulario = new FuncionesFormulario();
+            List<List<string>> NoAcreditadosTest = new List<List<string>>();
+            NoAcreditadosTest.Add(new List<string> { "383983", "30", "YES" });
+            List<List<string>> SiAcreditadosTest = new List<List<string>>();
+            SiAcreditadosTest.Add(new List<string> { "1", "30", "NO" });
+
+            Assert.AreEqual(funcionFormulario.ProcesarAdquirientesPorAcreditacion(SiAcreditadosTest, NoAcreditadosTest), SiAcreditadosTest);
+
         }
     }
 }
