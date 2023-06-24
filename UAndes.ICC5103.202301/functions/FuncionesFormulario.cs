@@ -8,8 +8,14 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class FuncionesFormulario
     {
-        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly InscripcionesBrDbEntities db;
 
+        public FuncionesFormulario(InscripcionesBrDbEntities DB)
+        {
+            db = DB;
+        }
+
+        //Funciones de uso general con relacion a Formatear, Editar, Obtener, verificar datos de un formulario.
         public (List<List<string>>, List<List<string>>) FormatearAdquirientesYEnajenantes(List<string> adquirientes, List<string> enajenantes)
         {
             double valorComparacion1;
@@ -241,7 +247,7 @@ namespace UAndes.ICC5103._202301.functions
                 .Where(Data4 => Data4.AnoVigenciaFinal == null)
                 .ToList();
 
-            if (formularios.Count > 0)
+            if ((formularios != null) && (!formularios.Any()))
             {
                 foreach (Multipropietario formulario in formularios)
                 {

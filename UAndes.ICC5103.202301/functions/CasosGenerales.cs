@@ -8,8 +8,15 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosGenerales
     {
-        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly InscripcionesBrDbEntities db;
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario(new InscripcionesBrDbEntities());
+
+        public CasosGenerales(InscripcionesBrDbEntities DB)
+        {
+            db = DB;
+        }
+
+        //Funciones donde se realiza la logica relacionada a los casos POST procesamiento de los formularios, estos se aplican siempre.
 
         private void RepartirAAdquirientesVacios(Enajenacion enajenacion)
         {
@@ -26,7 +33,8 @@ namespace UAndes.ICC5103._202301.functions
                     .ToList();
             foreach (var adquiriente in adquirientes)
             {
-                if (adquiriente.PorcentajeDerechoPropietario == cero)
+                string porcentajeMultipropietario = adquiriente.PorcentajeDerechoPropietario;
+                if (float.Parse(porcentajeMultipropietario) == float.Parse(cero))
                 {
                     cantidadDeVacios++;
                 }
@@ -36,7 +44,8 @@ namespace UAndes.ICC5103._202301.functions
             {
                 foreach (var adquiriente in adquirientes)
                 {
-                    if (adquiriente.PorcentajeDerechoPropietario == cero)
+                    string porcentajeMultipropietario = adquiriente.PorcentajeDerechoPropietario;
+                    if (float.Parse(porcentajeMultipropietario) == float.Parse(cero))
                     {
                         adquiriente.PorcentajeDerechoPropietario = ((100 - porcentajeTotal) / (float)cantidadDeVacios).ToString("F2");
                     }
@@ -58,7 +67,8 @@ namespace UAndes.ICC5103._202301.functions
                     .ToList();
             foreach (var adquiriente in adquirientes)
             {
-                if (adquiriente.PorcentajeDerechoPropietario == cero)
+                string porcentajeMultipropietario = adquiriente.PorcentajeDerechoPropietario;
+                if (float.Parse(porcentajeMultipropietario) == float.Parse(cero))
                 {
                     db.Multipropietario.Remove(adquiriente);
                 }

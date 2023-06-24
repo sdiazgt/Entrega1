@@ -8,9 +8,11 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosEnajenantes
     {
-        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
-        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
-        private readonly FuncionesFormulario formulario = new FuncionesFormulario();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario(new InscripcionesBrDbEntities());
+        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas(new InscripcionesBrDbEntities());
+        private readonly FuncionesFormulario formulario = new FuncionesFormulario(new InscripcionesBrDbEntities());
+
+        //Funciones donde se realiza la logica relacionada a los casos NORMALES de una COMPRAVENTA
 
         private bool CasoCienPorcientoAdquirientes(List<Multipropietario> multipropietarios, List<List<string>> adquirientes,
             List<List<string>> enajenantes, Enajenacion enajenacion)

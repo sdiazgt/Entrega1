@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Runtime.InteropServices.ComTypes;
 
 using UAndes.ICC5103._202301.functions;
+using NUnit.Framework.Constraints;
 
 namespace UAndes.ICC5103._202301.Controllers
 {
@@ -21,12 +22,27 @@ namespace UAndes.ICC5103._202301.Controllers
     {
         private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
 
-        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
-        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario(new InscripcionesBrDbEntities());
+        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas(new InscripcionesBrDbEntities());
         private readonly CasosEnajenantes CasosNoFantasma= new CasosEnajenantes();
-        private readonly CasosGenerales CasosGenerales = new CasosGenerales();
-        private readonly FuncionesFormulario formulario = new FuncionesFormulario();
-        private readonly RecalcularFormulario recalcular = new RecalcularFormulario();
+        private readonly CasosGenerales CasosGenerales = new CasosGenerales(new InscripcionesBrDbEntities());
+        private readonly FuncionesFormulario formulario = new FuncionesFormulario(new InscripcionesBrDbEntities());
+        private readonly RecalcularFormulario recalcular = new RecalcularFormulario(new InscripcionesBrDbEntities());
+
+        //Funciones relacionados al manejo de Errores de un formulario y la inicializacion del Procesamiento de Formularios.
+
+        private bool VerificarFechaFormulario(Enajenacion enajenacion)
+        {
+            DateTime fechaActual = DateTime.Today;
+            DateTime fechaFormulario = enajenacion.FechaInscripcion;
+
+            if (fechaFormulario.Date > fechaActual.Date)
+            {
+                ModelState.AddModelError("fechaInscripcion", "La fecha de inscripcion no puede ser mayor al dia de hoy");
+                return false;
+            }
+            return true;
+        }
 
         private bool VerificarNumeroInscripcionMenor(Enajenacion enajenacion, List<List<string>> adquirientes)
         {
@@ -148,7 +164,7 @@ namespace UAndes.ICC5103._202301.Controllers
             string regularizacionDePatrimonio = "2";
 
             if (VerificarRut(adquirientes, enajenantes, enajenacion) == false || VerificarNumeroInscripcion(enajenacion) == false ||
-                VerificarNumeroInscripcionMenor(enajenacion, adquirientes) == false)
+                VerificarNumeroInscripcionMenor(enajenacion, adquirientes) == false || VerificarFechaFormulario(enajenacion) == false)
             {
                 return false;
             }
@@ -190,6 +206,8 @@ namespace UAndes.ICC5103._202301.Controllers
             }
             return true;
         }
+
+        //Funciones relacionadas al manejo de END POINTS de las Views.
 
         // GET: Enajenacions
         public ActionResult Index()

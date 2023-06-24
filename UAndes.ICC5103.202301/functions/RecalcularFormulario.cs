@@ -9,13 +9,19 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class RecalcularFormulario
     {
-        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
-        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas();
+        private readonly InscripcionesBrDbEntities db;
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario(new InscripcionesBrDbEntities());
+        private readonly CasosEnajenantesFantasmas CasosFantasma = new CasosEnajenantesFantasmas(new InscripcionesBrDbEntities());
         private readonly CasosEnajenantes CasosNoFantasma = new CasosEnajenantes();
-        private readonly CasosGenerales CasosGenerales = new CasosGenerales();
-        private readonly FuncionesFormulario formulario = new FuncionesFormulario();
+        private readonly CasosGenerales CasosGenerales = new CasosGenerales(new InscripcionesBrDbEntities());
+        private readonly FuncionesFormulario formulario = new FuncionesFormulario(new InscripcionesBrDbEntities());
 
+        public RecalcularFormulario(InscripcionesBrDbEntities DB)
+        {
+            db = DB;
+        }
+
+        //Funciones donde se realiza la logica relacionada a RECALCULAR los formularios previamente creados.
         private void LimpiarMultipropietariosAnteriores(string comuna, string manzana, string predio)
         {
             var formularios = db.Multipropietario

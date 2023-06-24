@@ -8,30 +8,15 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class CasosEnajenantesFantasmas
     {
-        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
-        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario();
+        private readonly InscripcionesBrDbEntities db;
+        private readonly FuncionesMultipropietario funcionMultipropietario = new FuncionesMultipropietario(new InscripcionesBrDbEntities());
 
-        private List<Multipropietario> ObtenerEnajenantesNoFantasmas(List<List<string>> enajenantes, Enajenacion enajenacion)
+        public CasosEnajenantesFantasmas(InscripcionesBrDbEntities DB)
         {
-            List<Multipropietario> enajenanteNoFantasma = new List<Multipropietario>();
-            foreach (List<string> enajenante in enajenantes)
-            {
-                string rut = enajenante[0];
-                var multipropietarioEnajenante = db.Multipropietario
-                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
-                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
-                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
-                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
-                    .Where(Data4 => Data4.RutPropietario == rut)
-                    .ToList();
-                if (multipropietarioEnajenante.Count >= 1)
-                {
-                    enajenanteNoFantasma.Add(multipropietarioEnajenante[0]);
-                }
-            }
-
-            return new List<Multipropietario>(enajenanteNoFantasma);
+            db = DB;
         }
+
+        //Funciones donde se realiza la logica relacionada a los casos FANTASMAS de una COMPRAVENTA
 
         public bool BuscarEnajenantesFantasmas(List<List<string>> enajenantes, Enajenacion enajenacion)
         {
@@ -53,6 +38,28 @@ namespace UAndes.ICC5103._202301.functions
             }
 
             return false;
+        }
+
+        private List<Multipropietario> ObtenerEnajenantesNoFantasmas(List<List<string>> enajenantes, Enajenacion enajenacion)
+        {
+            List<Multipropietario> enajenanteNoFantasma = new List<Multipropietario>();
+            foreach (List<string> enajenante in enajenantes)
+            {
+                string rut = enajenante[0];
+                var multipropietarioEnajenante = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .Where(Data4 => Data4.RutPropietario == rut)
+                    .ToList();
+                if (multipropietarioEnajenante.Count >= 1)
+                {
+                    enajenanteNoFantasma.Add(multipropietarioEnajenante[0]);
+                }
+            }
+
+            return new List<Multipropietario>(enajenanteNoFantasma);
         }
 
         private bool CasoCienPorcientoAdquirientesFantasma(List<Multipropietario> multipropietarios, List<List<string>> adquirientes,

@@ -9,7 +9,14 @@ namespace UAndes.ICC5103._202301.functions
 {
     public class FuncionesMultipropietario
     {
-        private readonly InscripcionesBrDbEntities db = new InscripcionesBrDbEntities();
+        private readonly InscripcionesBrDbEntities db;
+
+        public FuncionesMultipropietario(InscripcionesBrDbEntities DB)
+        {
+            db = DB;
+        }
+
+        //Funciones de uso general con relacion a Crear, Editar o Obtener objetos de MULTIPROPIETARIO
 
         public void CrearMultipropietarios(List<Multipropietario> multipropietarios)
         {
@@ -121,18 +128,6 @@ namespace UAndes.ICC5103._202301.functions
             return multipropietarios;
         }
 
-        private List<Multipropietario> ObtenerMultipropietarioVigentes(Enajenacion enajenacion)
-        {
-            var multipropietariosVigentes = db.Multipropietario
-                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
-                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
-                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
-                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
-                    .ToList();
-
-            return CrearObjetoMultipropetarioVigente(multipropietariosVigentes, enajenacion);
-        }
-
         public List<Multipropietario> CambiarFechaInicialMultipropietario(List<Multipropietario> multipropietarios, Enajenacion enajenacion)
         {
             int ano = enajenacion.FechaInscripcion.Year;
@@ -182,6 +177,18 @@ namespace UAndes.ICC5103._202301.functions
                 return true;
             }
             return false;
+        }
+
+        private List<Multipropietario> ObtenerMultipropietarioVigentes(Enajenacion enajenacion)
+        {
+            var multipropietariosVigentes = db.Multipropietario
+                    .Where(Data1 => Data1.Comuna == enajenacion.Comuna)
+                    .Where(Data2 => Data2.Manzana == enajenacion.Manzana)
+                    .Where(Data3 => Data3.RolPredial == enajenacion.RolPredial)
+                    .Where(Data4 => Data4.AnoVigenciaFinal == null)
+                    .ToList();
+
+            return CrearObjetoMultipropetarioVigente(multipropietariosVigentes, enajenacion);
         }
 
         public List<Multipropietario> FormularioAProcesar(List<List<string>> adquirientes, Enajenacion enajenacion)
