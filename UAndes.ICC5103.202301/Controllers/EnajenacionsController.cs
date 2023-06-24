@@ -38,7 +38,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
             if (fechaFormulario.Date > fechaActual.Date)
             {
-                ModelState.AddModelError("fechaInscripcion", "La fecha de inscripcion no puede ser mayor al dia de hoy");
+                ModelState.AddModelError("FechaInscripcion", "La fecha de inscripcion no puede ser mayor al dia de hoy");
                 return false;
             }
             return true;
@@ -67,7 +67,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
                         if (rut == rutMultipropietario && inscripcionFormulario < inscripcion)
                         {
-                            ModelState.AddModelError("numeroInscripcion", "El numero de inscripcion no prevalece para el año ingresado");
+                            ModelState.AddModelError("NumeroInscripcion", "El numero de inscripcion no prevalece para el año ingresado");
                             return false;
                         }
                     }
@@ -81,7 +81,7 @@ namespace UAndes.ICC5103._202301.Controllers
             string numeroInscripcion = enajenacion.NumeroInscripcion;
             if (numeroInscripcion.All(char.IsDigit) == false)
             {
-                ModelState.AddModelError("numeroInscripcion", "El numero de inscripcion debe ser un numero");
+                ModelState.AddModelError("NumeroInscripcion", "El numero de inscripcion debe ser un numero");
                 return false;
             }
             return true;
@@ -146,12 +146,12 @@ namespace UAndes.ICC5103._202301.Controllers
             {
                 if (enajenante[0].Length < largoMaximo || enajenante[0].Length > largoMaximo)
                 {
-                    ModelState.AddModelError("enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    ModelState.AddModelError("Enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
                     return false;
                 }
                 else if (VerificarFormatoRut(enajenante[0]) == false)
                 {
-                    ModelState.AddModelError("enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
+                    ModelState.AddModelError("Enajenantes", "Los ruts ingresados no siguen el formato, este debe ser el rut sin punto y con guion");
                     return false;
                 }
             }
@@ -196,7 +196,7 @@ namespace UAndes.ICC5103._202301.Controllers
 
                 if (formulario.VerificarRegistrosAnteriores(enajenacion) == false)
                 {
-                    ModelState.AddModelError("numeroInscripcion", "El numero de inscripcion no prevalece para el año ingresado");
+                    ModelState.AddModelError("NumeroInscripcion", "El numero de inscripcion no prevalece para el año ingresado");
                     return false;
                 }
 
